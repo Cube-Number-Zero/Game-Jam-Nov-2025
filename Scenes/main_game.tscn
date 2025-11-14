@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://coqgfv4em5adt"]
+
+[ext_resource type="PackedScene" uid="uid://dhh3575hx7s8k" path="res://Scenes/game_field.tscn" id="1_l756w"]
+
+[node name="MainGame" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 2
+
+[node name="GameField" parent="." instance=ExtResource("1_l756w")]
+layout_mode = 2
