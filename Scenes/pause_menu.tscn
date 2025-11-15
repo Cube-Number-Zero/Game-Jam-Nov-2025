@@ -1,0 +1,161 @@
+[gd_scene load_steps=13 format=3 uid="uid://cm86hkmpa877n"]
+
+[ext_resource type="Script" uid="uid://bpsfqqoqbm3ii" path="res://Scripts/pause_menu.gd" id="1_1och7"]
+[ext_resource type="Texture2D" uid="uid://448tvveb2ihr" path="res://Assets/slider.png" id="2_vmyb1"]
+[ext_resource type="Texture2D" uid="uid://cogwyvoiabc2m" path="res://Assets/textureBarProgress_h_square.PNG" id="3_sjs17"]
+[ext_resource type="FontFile" uid="uid://c30rhp3jr7klg" path="res://Assets/Lilian.ttf" id="4_bpi0q"]
+[ext_resource type="Texture2D" uid="uid://df7sgg03v1aoj" path="res://Assets/textureBarProgress_h.png" id="4_stj27"]
+[ext_resource type="Texture2D" uid="uid://b182da2dydbs6" path="res://Assets/button.png" id="4_u8tnp"]
+[ext_resource type="Texture2D" uid="uid://caokrxhmtbcgm" path="res://Assets/SoundIcon.png" id="5_stj27"]
+[ext_resource type="Texture2D" uid="uid://dis28aeg2uugb" path="res://Assets/textureBarBottom_h.png" id="5_u8tnp"]
+[ext_resource type="Script" uid="uid://c5j7lsj8jsxsy" path="res://Scripts/NextSceneButton.gd" id="8_stj27"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_u8tnp"]
+color = Color(0, 0, 0, 0)
+thickness = 8
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_524vl"]
+texture = ExtResource("3_sjs17")
+texture_margin_left = 5.0
+texture_margin_right = 5.0
+expand_margin_top = 5.0
+expand_margin_bottom = 5.0
+axis_stretch_horizontal = 1
+region_rect = Rect2(103.82, 0, 359.883, 79)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_myy0f"]
+texture = ExtResource("4_stj27")
+texture_margin_left = 5.0
+texture_margin_right = 5.0
+expand_margin_top = 5.0
+expand_margin_bottom = 5.0
+axis_stretch_horizontal = 1
+region_rect = Rect2(75.0257, 0, 440.496, 79)
+
+[node name="pause_menu" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+script = ExtResource("1_1och7")
+
+[node name="background_base" type="ColorRect" parent="."]
+top_level = true
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="background_base"]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.27, 0.13689, 0.1323, 0.286275)
+
+[node name="volume_slider" type="HSlider" parent="background_base"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 80.0
+offset_top = -74.0
+offset_right = 380.0
+offset_bottom = -26.0
+grow_vertical = 2
+theme_override_icons/grabber = ExtResource("2_vmyb1")
+theme_override_icons/grabber_highlight = ExtResource("2_vmyb1")
+theme_override_styles/slider = SubResource("StyleBoxLine_u8tnp")
+theme_override_styles/grabber_area = SubResource("StyleBoxTexture_524vl")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxTexture_myy0f")
+value = 50.0
+
+[node name="sliber_bg_bottom" type="TextureRect" parent="background_base/volume_slider"]
+show_behind_parent = true
+layout_mode = 0
+offset_left = -1.0
+offset_top = 5.0
+offset_right = 635.0
+offset_bottom = 84.0
+scale = Vector2(0.48, 0.48)
+texture = ExtResource("5_u8tnp")
+
+[node name="slider_bg_top" type="TextureRect" parent="background_base/volume_slider"]
+offset_left = -1.0
+offset_top = 5.0
+offset_right = 23.0
+offset_bottom = 83.0
+scale = Vector2(0.48, 0.48)
+texture = ExtResource("5_u8tnp")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="slider_bg_top_end" type="TextureRect" parent="background_base/volume_slider"]
+offset_left = 289.0
+offset_top = 5.0
+offset_right = 321.0
+offset_bottom = 83.0
+scale = Vector2(0.48, 0.48)
+texture = ExtResource("5_u8tnp")
+expand_mode = 1
+stretch_mode = 1
+flip_h = true
+
+[node name="grabber_area_end" type="TextureRect" parent="background_base/volume_slider"]
+offset_left = 6.0
+offset_top = 15.0
+offset_right = 26.0
+offset_bottom = 75.0
+scale = Vector2(0.23, 0.23)
+texture = ExtResource("4_stj27")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="volume_button" type="TextureButton" parent="background_base"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 12.0
+offset_top = -74.0
+offset_right = 54.0
+offset_bottom = -42.0
+grow_vertical = 2
+scale = Vector2(1.5, 1.5)
+texture_normal = ExtResource("5_stj27")
+
+[node name="restart_button" type="TextureButton" parent="background_base"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 120.0
+offset_top = -2.0
+offset_right = 320.0
+offset_bottom = 78.0
+grow_vertical = 2
+pivot_offset = Vector2(100, 40)
+texture_normal = ExtResource("4_u8tnp")
+script = ExtResource("8_stj27")
+
+[node name="restart_text" type="RichTextLabel" parent="background_base/restart_button"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 80.0
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.796078, 0.501961, 0.156863, 1)
+theme_override_fonts/normal_font = ExtResource("4_bpi0q")
+theme_override_font_sizes/normal_font_size = 45
+text = "Restart
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TransitionTimer" type="Timer" parent="background_base/restart_button"]
+one_shot = true
+
+[connection signal="resized" from="." to="." method="_on_resized"]
+[connection signal="drag_ended" from="background_base/volume_slider" to="." method="_on_volume_change"]
+[connection signal="pressed" from="background_base/volume_button" to="." method="_on_mute"]
+[connection signal="button_down" from="background_base/restart_button" to="background_base/restart_button" method="_on_button_down"]
+[connection signal="pressed" from="background_base/restart_button" to="." method="_on_restart"]

@@ -1,0 +1,144 @@
+[gd_scene load_steps=11 format=3 uid="uid://cbyffljkxcmwn"]
+
+[ext_resource type="Script" uid="uid://b25xtgg0ic3ax" path="res://Scripts/menu.gd" id="1_dxfxl"]
+[ext_resource type="Texture2D" uid="uid://cmdu178xbnr2w" path="res://Assets/Bckgrd.png" id="2_ohmgb"]
+[ext_resource type="Texture2D" uid="uid://csnelc07c3qju" path="res://Assets/textureBarBottom.png" id="2_rdv7x"]
+[ext_resource type="Texture2D" uid="uid://bdq34t7kjbr5g" path="res://Assets/textureBarProgress.png" id="3_6eath"]
+[ext_resource type="Texture2D" uid="uid://b182da2dydbs6" path="res://Assets/button.png" id="4_6eath"]
+[ext_resource type="Script" path="res://Scripts/score_text.gd" id="5_6jpsg"]
+[ext_resource type="PackedScene" uid="uid://cm86hkmpa877n" path="res://Scenes/pause_menu.tscn" id="5_10i0i"]
+[ext_resource type="FontFile" uid="uid://c30rhp3jr7klg" path="res://Assets/Lilian.ttf" id="5_ohmgb"]
+[ext_resource type="Texture2D" uid="uid://cql1m7bgo1gim" path="res://Assets/eraserbutton.png" id="6_fmx78"]
+[ext_resource type="Script" uid="uid://c5j7lsj8jsxsy" path="res://Scripts/NextSceneButton.gd" id="8_y84al"]
+
+[node name="gameplay_menu" type="Control"]
+layout_mode = 3
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+script = ExtResource("1_dxfxl")
+
+[node name="gameplay_ui" type="CanvasLayer" parent="."]
+
+[node name="background_base" type="ColorRect" parent="."]
+top_level = true
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+
+[node name="background_sprite" type="Sprite2D" parent="background_base"]
+texture = ExtResource("2_ohmgb")
+centered = false
+
+[node name="time_left_progress_bar" type="TextureProgressBar" parent="background_base"]
+layout_mode = 0
+offset_left = 421.0
+offset_top = 7.0
+offset_right = 500.0
+offset_bottom = 643.0
+value = 75.0
+fill_mode = 3
+texture_under = ExtResource("2_rdv7x")
+texture_progress = ExtResource("3_6eath")
+
+[node name="score_text_label" type="RichTextLabel" parent="background_base"]
+layout_mode = 1
+offset_left = 12.0
+offset_top = 80.0
+offset_right = 430.0
+offset_bottom = 108.0
+theme_override_colors/default_color = Color(0.266667, 0.133333, 0.129412, 1)
+theme_override_fonts/normal_font = ExtResource("5_ohmgb")
+theme_override_font_sizes/normal_font_size = 20
+text = "Score: 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("5_6jpsg")
+
+[node name="timer" type="Timer" parent="background_base/score_text_label"]
+wait_time = 10.0
+autostart = true
+
+[node name="title_texture" type="TextureRect" parent="background_base"]
+layout_mode = 1
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 430.0
+offset_bottom = 92.0
+
+[node name="title_text" type="RichTextLabel" parent="background_base/title_texture"]
+layout_mode = 0
+offset_right = 418.0
+offset_bottom = 80.0
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.266667, 0.133333, 0.129412, 1)
+theme_override_fonts/normal_font = ExtResource("5_ohmgb")
+theme_override_font_sizes/normal_font_size = 45
+text = "Kruskal's Garden"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="erase_button" type="TextureButton" parent="background_base"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 228.0
+offset_top = -92.0
+offset_right = 428.0
+offset_bottom = -12.0
+grow_vertical = 0
+pivot_offset = Vector2(100, 40)
+toggle_mode = true
+action_mode = 0
+texture_normal = ExtResource("6_fmx78")
+script = ExtResource("8_y84al")
+
+[node name="TransitionTimer" type="Timer" parent="background_base/erase_button"]
+one_shot = true
+
+[node name="pause_menu" parent="background_base" instance=ExtResource("5_10i0i")]
+visible = false
+layout_mode = 1
+
+[node name="pause_button" type="TextureButton" parent="background_base"]
+process_mode = 3
+top_level = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = -92.0
+offset_right = 212.0
+offset_bottom = -12.0
+grow_vertical = 0
+pivot_offset = Vector2(100, 40)
+action_mode = 0
+texture_normal = ExtResource("4_6eath")
+script = ExtResource("8_y84al")
+
+[node name="pause_text" type="RichTextLabel" parent="background_base/pause_button"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 80.0
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.415686, 0.25098, 0.109804, 1)
+theme_override_fonts/normal_font = ExtResource("5_ohmgb")
+theme_override_font_sizes/normal_font_size = 45
+text = "Pause
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TransitionTimer" type="Timer" parent="background_base/pause_button"]
+one_shot = true
+
+[connection signal="resized" from="." to="." method="_on_resized"]
+[connection signal="timeout" from="background_base/score_text_label/timer" to="background_base/score_text_label" method="_on_timer_timeout"]
+[connection signal="button_down" from="background_base/erase_button" to="background_base/erase_button" method="_on_button_down"]
+[connection signal="toggled" from="background_base/erase_button" to="." method="_on_erase"]
+[connection signal="button_down" from="background_base/pause_button" to="background_base/pause_button" method="_on_button_down"]
+[connection signal="pressed" from="background_base/pause_button" to="." method="_on_pause"]
+[connection signal="toggled" from="background_base/pause_button" to="." method="_on_pause"]

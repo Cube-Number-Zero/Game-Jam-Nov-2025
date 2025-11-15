@@ -1,0 +1,106 @@
+[gd_scene load_steps=10 format=3 uid="uid://bvo3o0bhgqwhm"]
+
+[ext_resource type="Shader" uid="uid://bmqblb13swqpt" path="res://Assets/transition.gdshader" id="1_u6jug"]
+[ext_resource type="Script" uid="uid://d4lwcgmxmjjms" path="res://Scripts/screen_wipe.gd" id="2_qchj1"]
+[ext_resource type="Texture2D" uid="uid://n65ci8doe5fx" path="res://Assets/void.png" id="2_xpmgr"]
+[ext_resource type="Texture2D" uid="uid://0bb6rw8j5at3" path="res://Assets/nothing.png" id="3_xpmgr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2uako"]
+shader = ExtResource("1_u6jug")
+shader_parameter/use_sprite_alpha = false
+shader_parameter/use_transition_texture = true
+shader_parameter/transition_texture = ExtResource("2_xpmgr")
+shader_parameter/transition_type = 0
+shader_parameter/position = Vector2(0, 0)
+shader_parameter/invert = false
+shader_parameter/grid_size = Vector2(50, 50)
+shader_parameter/rotation_angle = 0.0
+shader_parameter/stagger = Vector2(0, 0)
+shader_parameter/stagger_frequency = Vector2i(2, 2)
+shader_parameter/flip_frequency = Vector2i(1, 1)
+shader_parameter/basic_feather = 0.0
+shader_parameter/use_mask_size = false
+shader_parameter/mask_size = Vector2(100, 100)
+shader_parameter/edges = 6
+shader_parameter/shape_feather = 0.1
+shader_parameter/sectors = 1
+shader_parameter/clock_feather = 0.0
+shader_parameter/progress = 0.0
+shader_parameter/progress_bias = Vector2(0.25, 0.25)
+
+[sub_resource type="Animation" id="Animation_t03yi"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:material:shader_parameter/progress")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_wcv1n"]
+resource_name = "Transition"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:material:shader_parameter/progress")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 5.0]
+}
+
+[sub_resource type="Animation" id="Animation_ggunf"]
+resource_name = "return"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:material:shader_parameter/progress")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [5.0, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2uako"]
+_data = {
+&"RESET": SubResource("Animation_t03yi"),
+&"Transition": SubResource("Animation_wcv1n"),
+&"return": SubResource("Animation_ggunf")
+}
+
+[node name="ScreenWipe" type="CanvasLayer"]
+
+[node name="ScreenWipe" type="TextureRect" parent="."]
+process_mode = 3
+top_level = true
+z_index = 22
+material = SubResource("ShaderMaterial_2uako")
+offset_left = -17.0
+offset_top = -173.0
+offset_right = 1183.0
+offset_bottom = 1027.0
+mouse_filter = 2
+texture = ExtResource("3_xpmgr")
+script = ExtResource("2_qchj1")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="ScreenWipe" groups=["wipe"]]
+libraries = {
+&"": SubResource("AnimationLibrary_2uako")
+}
+
+[node name="TransitionTimer" type="Timer" parent="ScreenWipe"]
+one_shot = true
+
+[connection signal="animation_finished" from="ScreenWipe/AnimationPlayer" to="ScreenWipe" method="_on_animation_player_animation_finished"]

@@ -10,7 +10,7 @@ var is_drawing: bool = false ## Whether or not the player is currently drawing
 var drawing_type: Flower.FlowerType
 var drawing_cell: Vector2i
 
-var erase_mode: bool = false
+static var erase_mode: bool = false
 
 const ATLAS_INDEX_TO_ATLAS_COORDS: Dictionary[int, Vector2i] = {
 	0x1: Vector2i(0, 3),
@@ -104,8 +104,8 @@ func _process(_delta: float) -> void:
 	else:
 		draw()
 	# Testing toggle for erase mode
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
-		erase_mode = true
+	#if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+	#	erase_mode = true
 
 
 

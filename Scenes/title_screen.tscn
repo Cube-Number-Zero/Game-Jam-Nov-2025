@@ -1,0 +1,124 @@
+[gd_scene load_steps=6 format=3 uid="uid://bfauf1gkapklw"]
+
+[ext_resource type="Texture2D" uid="uid://b182da2dydbs6" path="res://Assets/button.png" id="1_klylv"]
+[ext_resource type="Script" uid="uid://doq7yk4qh8cfi" path="res://Scripts/title_screen.gd" id="1_p3fck"]
+[ext_resource type="Texture2D" uid="uid://bikw3hujc2vwn" path="res://Assets/title_screen.png" id="2_4gxqj"]
+[ext_resource type="Script" uid="uid://c5j7lsj8jsxsy" path="res://Scripts/NextSceneButton.gd" id="4_55kwv"]
+[ext_resource type="FontFile" uid="uid://c30rhp3jr7klg" path="res://Assets/Lilian.ttf" id="4_twnyg"]
+
+[node name="TitleScreen" type="Node2D"]
+process_mode = 3
+script = ExtResource("1_p3fck")
+
+[node name="title_canvas" type="CanvasLayer" parent="."]
+process_mode = 3
+
+[node name="background" type="TextureRect" parent="title_canvas"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="title_image" type="TextureRect" parent="title_canvas"]
+anchors_preset = -1
+anchor_left = -0.0729167
+anchor_top = 0.0895062
+anchor_right = 1.07292
+anchor_bottom = 0.910494
+offset_left = 84.0
+offset_top = -58.0
+offset_right = 684.0
+offset_bottom = 490.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("2_4gxqj")
+metadata/_edit_use_anchors_ = true
+
+[node name="start_button" type="TextureButton" parent="title_canvas"]
+top_level = true
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -582.0
+offset_top = -174.0
+offset_right = -382.0
+offset_bottom = -94.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(0.8, 0.8)
+pivot_offset = Vector2(100, 40)
+texture_normal = ExtResource("1_klylv")
+script = ExtResource("4_55kwv")
+metadata/_edit_use_anchors_ = true
+
+[node name="start_Text" type="RichTextLabel" parent="title_canvas/start_button"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 80.0
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.952941, 0.694118, 0.25098, 1)
+theme_override_fonts/normal_font = ExtResource("4_twnyg")
+theme_override_font_sizes/normal_font_size = 45
+text = "Start"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TransitionTimer" type="Timer" parent="title_canvas/start_button"]
+one_shot = true
+
+[node name="quit_button" type="TextureButton" parent="title_canvas"]
+top_level = true
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -382.0
+offset_top = -174.0
+offset_right = -182.0
+offset_bottom = -94.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(0.8, 0.774268)
+pivot_offset = Vector2(100, 40)
+texture_normal = ExtResource("1_klylv")
+script = ExtResource("4_55kwv")
+metadata/_edit_use_anchors_ = true
+
+[node name="quit_text" type="RichTextLabel" parent="title_canvas/quit_button"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 80.0
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.952941, 0.694118, 0.25098, 1)
+theme_override_fonts/normal_font = ExtResource("4_twnyg")
+theme_override_font_sizes/normal_font_size = 45
+text = "Quit
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TransitionTimer" type="Timer" parent="title_canvas/quit_button"]
+one_shot = true
+
+[node name="Title" type="RichTextLabel" parent="title_canvas"]
+offset_left = 472.0
+offset_top = 50.0
+offset_right = 1112.0
+offset_bottom = 150.0
+theme_override_colors/default_color = Color(0.952941, 0.945098, 0.901961, 1)
+theme_override_fonts/normal_font = ExtResource("4_twnyg")
+theme_override_font_sizes/normal_font_size = 75
+text = "Kruskal's Garden"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="button_down" from="title_canvas/start_button" to="title_canvas/start_button" method="_on_button_down"]
+[connection signal="pressed" from="title_canvas/start_button" to="." method="_on_start"]
+[connection signal="button_down" from="title_canvas/quit_button" to="title_canvas/quit_button" method="_on_button_down"]
+[connection signal="pressed" from="title_canvas/quit_button" to="." method="_on_quit"]
