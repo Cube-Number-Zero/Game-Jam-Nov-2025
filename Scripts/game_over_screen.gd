@@ -32,19 +32,23 @@ func game_done(score: int) -> void:
 	
 func _process(_delta) ->void:
 	if transition.transition_done and restarting == true:
-		print("transition done")
+		#print("transition done")
 		transition.transition_done = false
 		restarted = true
 		get_node("../TitleScreen/title_canvas").set_visible(true)
 		gameover_base.set_visible(false)
 		transition.trans_return()
+		transition.static_restart()
 		get_tree().reload_current_scene()
 	elif restarted == true and restarting == true:
-		print("transition done")
+		#print("transition done")
+		transition.static_restart()
 		get_tree().reload_current_scene()
 	elif transition.transition_done:
 		get_node("../TitleScreen/title_canvas").set_visible(true)
+		transition.static_restart()
 		get_tree().reload_current_scene()
 	else:
 		pass
+		
 	

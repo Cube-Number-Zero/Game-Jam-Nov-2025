@@ -25,7 +25,6 @@ func _on_transition_timer_timeout() -> void:
 	transition_done = true
 	#SceneHandler.changeScene(SceneToTransitionTo)
 
-
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if (anim_name == "return"):
 		transition_done = false
@@ -33,4 +32,9 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		transition_done = true
 	if game_restarting == true:
 		game_restarting = false
+		static_restart()
 		get_tree().reload_current_scene()
+		
+func static_restart() -> void:
+	#reset static variables here
+	pass

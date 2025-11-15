@@ -53,9 +53,11 @@ func _process(_delta) ->void:
 			restarted = true
 			get_node("../../../../TitleScreen/title_canvas").set_visible(true)
 			transition.trans_return()
+			transition.static_restart()
 			get_tree().reload_current_scene()
 		elif restarted == true and restarting == true:
 			print("transition done")
+			transition.tatic_restart()
 			get_tree().reload_current_scene()
 		else:
 			pass

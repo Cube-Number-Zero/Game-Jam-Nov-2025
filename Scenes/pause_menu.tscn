@@ -81,6 +81,7 @@ scale = Vector2(0.48, 0.48)
 texture = ExtResource("5_u8tnp")
 
 [node name="slider_bg_top" type="TextureRect" parent="background_base/volume_slider"]
+layout_mode = 0
 offset_left = -1.0
 offset_top = 5.0
 offset_right = 23.0
@@ -91,6 +92,7 @@ expand_mode = 1
 stretch_mode = 1
 
 [node name="slider_bg_top_end" type="TextureRect" parent="background_base/volume_slider"]
+layout_mode = 0
 offset_left = 289.0
 offset_top = 5.0
 offset_right = 321.0
@@ -102,6 +104,7 @@ stretch_mode = 1
 flip_h = true
 
 [node name="grabber_area_end" type="TextureRect" parent="background_base/volume_slider"]
+layout_mode = 0
 offset_left = 6.0
 offset_top = 15.0
 offset_right = 26.0
