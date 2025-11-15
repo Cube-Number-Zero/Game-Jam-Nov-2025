@@ -29,9 +29,14 @@ mouse_filter = 2
 autostart = true
 
 [node name="PortalSpawnTimer" type="Timer" parent="."]
-wait_time = 4.5
+wait_time = 11.25
+autostart = true
+
+[node name="FlowerSpawnTimer" type="Timer" parent="."]
+wait_time = 2.0
 autostart = true
 
 [connection signal="resized" from="." to="." method="_on_resized"]
 [connection signal="timeout" from="CheckIslandsTimer" to="." method="_on_check_islands_timer_timeout"]
 [connection signal="timeout" from="PortalSpawnTimer" to="." method="_on_portal_spawn_timer_timeout"]
+[connection signal="timeout" from="FlowerSpawnTimer" to="." method="_on_flower_spawn_timer_timeout"]

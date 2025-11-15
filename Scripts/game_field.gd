@@ -32,12 +32,32 @@ func _ready() -> void:
 		board.create_flower_at_random_location(type)
 		board.create_flower_at_random_location(type)
 
-
+func create_random_flower() -> void:
+	var type: Flower.FlowerType = [Flower.FlowerType.FLOWER_COLOR_1, Flower.FlowerType.FLOWER_COLOR_2, Flower.FlowerType.FLOWER_COLOR_3].pick_random()
+	var possible_boards: Array[Board] = []
+	for flower: Flower in flower_lists[type]:
+		var board: Board = flower.get_node(^"../..")
+		if not board in possible_boards:
+			possible_boards.append(board)
+	
+	var new_possible_boards: Array[Board] = possible_boards.duplicate()
+	while len(new_possible_boards):
+		for portal: Portal in new_possible_boards[0].get_node(^"Portals").get_children():
+			var board2: Board = portal.linked_portal.get_node(^"../..")
+			if not board2 in possible_boards:
+				possible_boards.append(board2)
+				new_possible_boards.append(board2)
+		new_possible_boards.erase(new_possible_boards[0])
+	
+	var used_board: Board = possible_boards.pick_random()
+	
+	used_board.create_flower_at_random_location(type)
+	
 
 func create_random_portals() -> void:
 	
 	# Find locations
-	var attempts_left: int = 64
+	var attempts_left: int = 16
 	var coords1 := Vector3i(-1, -1, -1)
 	var coords2 := Vector3i(-1, -1, -1)
 	while coords1 == Vector3i(-1, -1, -1):
@@ -101,8 +121,8 @@ func check_disconnected_regions(type: Flower.FlowerType) -> void:
 			Vector3i(unreached_flowers[0].cell.x, unreached_flowers[0].cell.y, unreached_flowers[0].get_node(^"../..").z_dimension),
 			type)
 		for connected_flower: Flower in connected:
-			assert(not connected_flower in reached_flowers)
-			reached_flowers.append(connected_flower)
+			if not connected_flower in reached_flowers:
+				reached_flowers.append(connected_flower)
 			unreached_flowers.erase(connected_flower)
 
 func check_all_disconnected_regions() -> void:
@@ -117,3 +137,7 @@ func _on_check_islands_timer_timeout() -> void:
 
 func _on_portal_spawn_timer_timeout() -> void:
 	create_random_portals()
+
+
+func _on_flower_spawn_timer_timeout() -> void:
+	create_random_flower()
