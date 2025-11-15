@@ -63,13 +63,29 @@ func _on_resized() -> void:
 
 
 func check_disconnected_regions(type: Flower.FlowerType) -> void:
+	disconnected_regions[type] = 0
 	if len(flower_lists[type]) == 0:
-		disconnected_regions[type] = 0
 		return
 	var reached_flowers: Array[Flower] = []
-	var unreached_flowers: Array[Flower] = flower_lists[type].duplicate()
+	var unreached_flowers: Array = flower_lists[type].duplicate()
 	
+	while len(unreached_flowers):
+		disconnected_regions[type] += 1
+		var connected: Array[Flower] = Board.get_flowers_connected_to_cell(
+			Vector3i(unreached_flowers[0].cell.x, unreached_flowers[0].cell.y, unreached_flowers[0].get_node(^"../..").z_dimension),
+			type)
+		for connected_flower: Flower in connected:
+			assert(not connected_flower in reached_flowers)
+			reached_flowers.append(connected_flower)
+			unreached_flowers.erase(connected_flower)
 	
-	
-	
-	
+	print(disconnected_regions[type])
+
+func check_all_disconnected_regions() -> void:
+	check_disconnected_regions(Flower.FlowerType.FLOWER_COLOR_1)
+	check_disconnected_regions(Flower.FlowerType.FLOWER_COLOR_2)
+	check_disconnected_regions(Flower.FlowerType.FLOWER_COLOR_3)
+
+
+func _on_check_islands_timer_timeout() -> void:
+	check_all_disconnected_regions()
