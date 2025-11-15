@@ -27,17 +27,43 @@ func _ready() -> void:
 	
 	calculate_scale()
 	
-	#Create a portal pair for testing
+	for type: Flower.FlowerType in [Flower.FlowerType.FLOWER_COLOR_1, Flower.FlowerType.FLOWER_COLOR_2, Flower.FlowerType.FLOWER_COLOR_3]:
+		var board: Board = $Grid.get_children().pick_random()
+		board.create_flower_at_random_location(type)
+		board.create_flower_at_random_location(type)
+
+
+
+func create_random_portals() -> void:
 	
-	for i in range(8):
+	# Find locations
+	var attempts_left: int = 64
+	var coords1 := Vector3i(-1, -1, -1)
+	var coords2 := Vector3i(-1, -1, -1)
+	while coords1 == Vector3i(-1, -1, -1):
+		var board: Board = $Grid.get_children().pick_random()
+		var x: int = randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1)
+		var y: int = randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1)
+		if board.is_empty_at_cell(Vector2i(x, y)):
+			coords1 = Vector3i(x, y, board.z_dimension)
+		else:
+			attempts_left -= 1
+			if not attempts_left: return # Board was too full. Fail.
+	while coords2 == Vector3i(-1, -1, -1):
+		var board: Board = $Grid.get_children().pick_random()
+		var x: int = randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1)
+		var y: int = randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1)
+		if board.is_empty_at_cell(Vector2i(x, y)):
+			coords2 = Vector3i(x, y, board.z_dimension)
+		else:
+			attempts_left -= 1
+			if not attempts_left: return # Board was too full. Fail.
 	
-		Portal.link_portals(
-			$Grid.get_child(randi_range(0, meta_grid_dimensions.x * meta_grid_dimensions.y - 1)).create_portal(
-				randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1), randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1)),
-			$Grid.get_child(randi_range(0, meta_grid_dimensions.x * meta_grid_dimensions.y - 1)).create_portal(
-				randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1), randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1))
-		)
-		Portal.update_colors()
+	# Create portal!
+	var portal1: Portal = Board.boards[coords1.z].create_portal(coords1.x, coords1.y)
+	var portal2: Portal = Board.boards[coords2.z].create_portal(coords2.x, coords2.y)
+	Portal.link_portals(portal1, portal2)
+	Portal.update_colors()
 
 ## Resizes the game world to fit the screen.
 func calculate_scale() -> void:
@@ -87,3 +113,7 @@ func check_all_disconnected_regions() -> void:
 
 func _on_check_islands_timer_timeout() -> void:
 	check_all_disconnected_regions()
+
+
+func _on_portal_spawn_timer_timeout() -> void:
+	create_random_portals()

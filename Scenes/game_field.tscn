@@ -28,5 +28,10 @@ mouse_filter = 2
 [node name="CheckIslandsTimer" type="Timer" parent="."]
 autostart = true
 
+[node name="PortalSpawnTimer" type="Timer" parent="."]
+wait_time = 4.5
+autostart = true
+
 [connection signal="resized" from="." to="." method="_on_resized"]
 [connection signal="timeout" from="CheckIslandsTimer" to="." method="_on_check_islands_timer_timeout"]
+[connection signal="timeout" from="PortalSpawnTimer" to="." method="_on_portal_spawn_timer_timeout"]

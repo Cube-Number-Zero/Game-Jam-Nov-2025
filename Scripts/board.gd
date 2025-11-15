@@ -91,17 +91,15 @@ func _ready() -> void:
 	for x: int in range(BOARD_DIMENSIONS_CELLS):
 		for y: int in range(BOARD_DIMENSIONS_CELLS):
 			$BackgroundTiles.set_cell(Vector2i(x, y), 0, Vector2i(randi_range(0, 4), 13))
-	
-	# Create three random flowers (for testing purposes)
-	create_flower(	randi_range(0, BOARD_DIMENSIONS_CELLS - 1),
-					randi_range(0, BOARD_DIMENSIONS_CELLS - 1),
-					Flower.FlowerType.FLOWER_COLOR_1)
-	create_flower(	randi_range(0, BOARD_DIMENSIONS_CELLS - 1),
-					randi_range(0, BOARD_DIMENSIONS_CELLS - 1),
-					Flower.FlowerType.FLOWER_COLOR_2)
-	create_flower(	randi_range(0, BOARD_DIMENSIONS_CELLS - 1),
-					randi_range(0, BOARD_DIMENSIONS_CELLS - 1),
-					Flower.FlowerType.FLOWER_COLOR_3)
+
+
+func create_flower_at_random_location(type: Flower.FlowerType):
+	var x: int = randi_range(0, BOARD_DIMENSIONS_CELLS - 1)
+	var y: int = randi_range(0, BOARD_DIMENSIONS_CELLS - 1)
+	if is_empty_at_cell(Vector2i(x, y)):
+		create_flower(x, y, type)
+
+
 
 func create_flower(x_cell: int, y_cell: int, flower_type: Flower.FlowerType) -> void:
 	var real_flower: Flower = PACKED_FLOWER.instantiate()
@@ -127,6 +125,12 @@ func _physics_process(_delta: float) -> void:
 		erase()
 	else:
 		draw()
+
+func is_empty_at_cell(cell: Vector2i) -> bool:
+	var l1: bool = (EMPTY_ATLAS_COORDS == $TileMapLayer1.get_cell_atlas_coords(cell))
+	var l2: bool = (EMPTY_ATLAS_COORDS == $TileMapLayer1.get_cell_atlas_coords(cell))
+	var l3: bool = (EMPTY_ATLAS_COORDS == $TileMapLayer1.get_cell_atlas_coords(cell))
+	return l1 and l2 and l3
 
 #region black magic
 
