@@ -1,0 +1,71 @@
+[gd_scene load_steps=4 format=3 uid="uid://bfauf1gkapklw"]
+
+[ext_resource type="Texture2D" uid="uid://b182da2dydbs6" path="res://Assets/button.png" id="1_klylv"]
+[ext_resource type="Script" uid="uid://doq7yk4qh8cfi" path="res://Scripts/title_screen.gd" id="1_p3fck"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_p3fck"]
+
+[node name="TitleScreen" type="Node2D"]
+process_mode = 3
+script = ExtResource("1_p3fck")
+
+[node name="title_canvas" type="CanvasLayer" parent="."]
+process_mode = 3
+
+[node name="background" type="TextureRect" parent="title_canvas"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="title_image" type="TextureRect" parent="title_canvas"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -526.0
+offset_top = -274.0
+offset_right = 74.0
+offset_bottom = 274.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("PlaceholderTexture2D_p3fck")
+metadata/_edit_use_anchors_ = true
+
+[node name="start_button" type="TextureButton" parent="title_canvas"]
+top_level = true
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -330.0
+offset_top = -120.0
+offset_right = -130.0
+offset_bottom = -40.0
+grow_horizontal = 0
+grow_vertical = 2
+texture_normal = ExtResource("1_klylv")
+metadata/_edit_use_anchors_ = true
+
+[node name="quit_button" type="TextureButton" parent="title_canvas"]
+top_level = true
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -330.0
+offset_top = 40.0
+offset_right = -130.0
+offset_bottom = 120.0
+grow_horizontal = 0
+grow_vertical = 2
+texture_normal = ExtResource("1_klylv")
+metadata/_edit_use_anchors_ = true
+
+[connection signal="pressed" from="title_canvas/start_button" to="." method="_on_start"]
+[connection signal="pressed" from="title_canvas/quit_button" to="." method="_on_quit"]
