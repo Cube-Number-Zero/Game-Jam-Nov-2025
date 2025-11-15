@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://lpm1mtglb3jn"
-path="res://.godot/imported/Placeholder Vines.png-c451c4181f4d0c813cf985d0f9c31135.ctex"
+uid="uid://cxgg02y57xsvm"
+path="res://.godot/imported/tileset.png-06023f60f54ec986b75003a8d422612f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Placeholder Vines.png"
-dest_files=["res://.godot/imported/Placeholder Vines.png-c451c4181f4d0c813cf985d0f9c31135.ctex"]
+source_file="res://Assets/tileset.png"
+dest_files=["res://.godot/imported/tileset.png-06023f60f54ec986b75003a8d422612f.ctex"]
 
 [params]
 

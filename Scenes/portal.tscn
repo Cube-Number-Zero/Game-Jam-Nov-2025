@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://kw1qyys3kwul"]
+
+[ext_resource type="Script" uid="uid://1whjuqjk8tdy" path="res://portal.gd" id="1_j20fm"]
+
+[node name="Portal" type="Node2D"]
+script = ExtResource("1_j20fm")
+metadata/_custom_type_script = "uid://1whjuqjk8tdy"

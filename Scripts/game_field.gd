@@ -3,7 +3,7 @@ extends Control
 
 const PACKED_BOARD: PackedScene = preload("res://Scenes/board.tscn")
 
-static var meta_grid_dimensions: Vector2i = Vector2i(3, 3) ## H0w many boards are in the game?
+static var meta_grid_dimensions: Vector2i = Vector2i(2, 2) ## H0w many boards are in the game?
 
 
 func _ready() -> void:
@@ -32,7 +32,8 @@ func calculate_scale() -> void:
 
 func resize_boards(board_scale: float) -> void:
 	for board: Board in $Grid.get_children():
-		board.get_child(0).scale = Vector2(board_scale, board_scale)
+		for child in board.get_children():
+			child.scale = Vector2(board_scale, board_scale)
 
 func _on_resized() -> void:
 	calculate_scale()

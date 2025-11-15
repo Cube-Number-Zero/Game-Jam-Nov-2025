@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://dlfucslspp5xo"]
+
+[ext_resource type="TileSet" uid="uid://bwr60g56p7e1s" path="res://Assets/new_tile_set.tres" id="1_qcqnl"]
+[ext_resource type="Script" uid="uid://dlqpg0qxur57n" path="res://Scripts/vine_tile_map_layer.gd" id="2_qcqnl"]
+
+[node name="TileMapLayer" type="TileMapLayer"]
+tile_set = ExtResource("1_qcqnl")
+script = ExtResource("2_qcqnl")
