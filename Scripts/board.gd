@@ -111,7 +111,6 @@ func create_flower(x_cell: int, y_cell: int, flower_type: Flower.FlowerType) -> 
 	$"../..".flower_lists[flower_type].append(real_flower)
 	real_flower.cell = Vector2i(x_cell, y_cell)
 	flowertype[flower_type].set_cell(Vector2i(x_cell, y_cell), 0, ATLAS_OFFSETS[flower_type])
-	$"../..".check_disconnected_regions(flower_type)
 
 func create_portal(x_cell: int, y_cell: int) -> Portal:
 	var real_portal: Portal = PACKED_PORTAL.instantiate()
@@ -121,7 +120,6 @@ func create_portal(x_cell: int, y_cell: int) -> Portal:
 	$TileMapLayer2.set_cell(Vector2i(x_cell, y_cell), 0, PORTAL_ATLAS_COORDS)
 	$TileMapLayer3.set_cell(Vector2i(x_cell, y_cell), 0, PORTAL_ATLAS_COORDS)
 	real_portal.cell = Vector2i(x_cell, y_cell)
-	$"../..".check_all_disconnected_regions()
 	return real_portal
 
 func _physics_process(_delta: float) -> void:
@@ -370,8 +368,6 @@ func draw_through_portal(portal: Portal, direction: Vector2i) -> void:
 			var atlascoords: Vector2i = ATLAS_INDEX_TO_ATLAS_COORDS[atlasindex] + ATLAS_OFFSETS[drawing_type]
 			tilelayer2.set_cell(portal2.cell + direction, 0, atlascoords)
 			
-	
-	#tilelayer2.set_cell(portal2.cell + cell - drawing_cell, 0, FLOWER_ATLAS_COORDS + atlas_offsets[drawing_type])
 
 func can_draw_at(cell: Vector2i) -> bool:
 	if cell.x < 0 or cell.y < 0 or cell.x >= BOARD_DIMENSIONS_CELLS or cell.y >= BOARD_DIMENSIONS_CELLS:

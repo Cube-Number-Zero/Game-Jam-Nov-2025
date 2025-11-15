@@ -37,4 +37,6 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		
 func static_restart() -> void:
 	#reset static variables here
-	pass
+	Board.boards = []
+	Board.erase_mode = false
+	Portal.all_portal_list = []

@@ -78,8 +78,6 @@ func check_disconnected_regions(type: Flower.FlowerType) -> void:
 			assert(not connected_flower in reached_flowers)
 			reached_flowers.append(connected_flower)
 			unreached_flowers.erase(connected_flower)
-	
-	print(disconnected_regions[type])
 
 func check_all_disconnected_regions() -> void:
 	check_disconnected_regions(Flower.FlowerType.FLOWER_COLOR_1)
