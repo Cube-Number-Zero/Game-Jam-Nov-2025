@@ -16,12 +16,13 @@ metadata/_custom_type_script = "uid://4axiakjbo4ut"
 tile_set = ExtResource("2_uh3b8")
 
 [node name="TileMapLayer1" parent="." instance=ExtResource("2_2wvcj")]
-tile_map_data = PackedByteArray(0, 0, 0, 0, 11, 0, 0, 0, 1, 0, 2, 0, 0, 0, 11, 0, 11, 0, 0, 0, 2, 0, 2, 0, 0, 0, 11, 0, 0, 0, 0, 0, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0)
 
 [node name="TileMapLayer2" parent="." instance=ExtResource("2_2wvcj")]
 
 [node name="TileMapLayer3" parent="." instance=ExtResource("2_2wvcj")]
 
 [node name="Flowers" type="Node2D" parent="."]
+
+[node name="Portals" type="Node2D" parent="."]
 
 [connection signal="resized" from="." to="." method="_on_resized"]

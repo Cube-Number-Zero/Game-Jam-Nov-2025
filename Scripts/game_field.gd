@@ -15,7 +15,18 @@ func _ready() -> void:
 		$Grid.add_child(real_board)
 	
 	calculate_scale()
-		
+	
+	#Create a portal pair for testing
+	
+	for i in range(8):
+	
+		Portal.link_portals(
+			$Grid.get_child(randi_range(0, meta_grid_dimensions.x * meta_grid_dimensions.y - 1)).create_portal(
+				randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1), randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1)),
+			$Grid.get_child(randi_range(0, meta_grid_dimensions.x * meta_grid_dimensions.y - 1)).create_portal(
+				randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1), randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1))
+		)
+		Portal.update_colors()
 
 ## Resizes the game world to fit the screen.
 func calculate_scale() -> void:
