@@ -12,6 +12,7 @@ grow_horizontal = 0
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_7vwt3")
+metadata/_custom_type_script = "uid://cl6n3iv7r1xeh"
 
 [node name="Grid" type="GridContainer" parent="."]
 layout_mode = 1

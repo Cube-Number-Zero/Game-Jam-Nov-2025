@@ -8,7 +8,7 @@ const TILE_SIZE: int = 26 ## The height/width of tiles, in pixels
 const BOARD_DIMENSIONS_CELLS: int = 12 ## The width of the board, in cells
 
 var is_drawing: bool = false ## Whether or not the player is currently drawing
-var drawing_type: Flower.FlowerType
+static var drawing_type: Flower.FlowerType
 var drawing_cell: Vector2i
 
 var erase_mode: bool = false
@@ -100,6 +100,7 @@ func create_flower(x_cell: int, y_cell: int, flower_type: Flower.FlowerType) -> 
 	$Flowers.add_child(real_flower)
 	real_flower.position = $TileMapLayer1.map_to_local(Vector2i(x_cell, y_cell))
 	real_flower.type = flower_type
+	$"../..".flower_lists[flower_type].append(real_flower)
 	flowertype[flower_type].set_cell(Vector2i(x_cell, y_cell), 0, atlas_offsets[flower_type])
 
 func create_portal(x_cell: int, y_cell: int) -> Portal:
@@ -120,8 +121,6 @@ func _process(_delta: float) -> void:
 	# Testing toggle for erase mode
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
 		erase_mode = true
-
-
 
 #region black magic
 
@@ -308,10 +307,36 @@ func draw() -> void:
 func draw_through_portal(portal: Portal, direction: Vector2i) -> void:
 	is_drawing = false
 	var portal2: Portal = portal.linked_portal
+	
+	
+	
 	var board2: Board = portal2.get_node(^"../..")
-	print(board2.flowertype[drawing_type].name)
+	# Check if new cell can be drawn at
+	if not board2.can_draw_at(portal2.cell + direction):
+		return
+	
 	var tilelayer2: TileMapLayer = board2.flowertype[drawing_type]
-	#var atlascoords2: Vector2i = tilelayer2.get(
+	var atlascoords2: Vector2i = tilelayer2.get_cell_atlas_coords(portal2.cell + direction)
+	match atlascoords2:
+		EMPTY_ATLAS_COORDS:
+			var atlasindex: int = INVERT_ATLAS_INDEX[VECTOR_TO_ATLAS_INDEX[direction]]
+			var atlascoords: Vector2i = ATLAS_INDEX_TO_ATLAS_COORDS[atlasindex] + atlas_offsets[drawing_type]
+			tilelayer2.set_cell(portal2.cell + direction, 0, atlascoords)
+		PORTAL_ATLAS_COORDS:
+			if get_portal_at_cell(portal2.cell + direction) == portal:
+				return # STOP INFINITE LOOP
+			else:
+				draw_through_portal(get_portal_at_cell(portal2.cell + direction), direction)
+		FLOWER_ATLAS_COORDS:
+			#Don't need to do anything.
+			return
+		_:
+			var atlasindex: int = INVERT_ATLAS_INDEX[VECTOR_TO_ATLAS_INDEX[direction]]
+			atlasindex |= ATLAS_COORDS_TO_ATLAS_INDEX[atlascoords2 - atlas_offsets[drawing_type]]
+			var atlascoords: Vector2i = ATLAS_INDEX_TO_ATLAS_COORDS[atlasindex] + atlas_offsets[drawing_type]
+			tilelayer2.set_cell(portal2.cell + direction, 0, atlascoords)
+			
+	
 	#tilelayer2.set_cell(portal2.cell + cell - drawing_cell, 0, FLOWER_ATLAS_COORDS + atlas_offsets[drawing_type])
 
 
@@ -320,6 +345,7 @@ func can_draw_at(cell: Vector2i) -> bool:
 		return false # out of bounds
 	
 	if $TileMapLayer1.get_cell_atlas_coords(cell) != PORTAL_ATLAS_COORDS:
+		print(cell)
 		if $TileMapLayer1.get_cell_atlas_coords(cell) != EMPTY_ATLAS_COORDS:
 			if drawing_type != Flower.FlowerType.FLOWER_COLOR_1 or not $TileMapLayer1.get_cell_atlas_coords(cell) in [Vector2i(0, 0), Vector2i(1, 0), Vector2i(3, 0), Vector2i(0, 1), Vector2i(0, 3)]:
 				return false # already something here!

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://kw1qyys3kwul"]
 
-[ext_resource type="Script" uid="uid://1whjuqjk8tdy" path="res://portal.gd" id="1_j20fm"]
+[ext_resource type="Script" uid="uid://1whjuqjk8tdy" path="res://Scripts/portal.gd" id="1_j20fm"]
 [ext_resource type="Texture2D" uid="uid://cxgg02y57xsvm" path="res://Assets/tileset.png" id="2_oi2tk"]
 
 [node name="Portal" type="Node2D"]

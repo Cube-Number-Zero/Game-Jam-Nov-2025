@@ -1,10 +1,15 @@
-extends Control
+class_name GameField extends Control
 ## This is the node that contains each of the smaller boards, and arranges them in a grid.
 
 const PACKED_BOARD: PackedScene = preload("res://Scenes/board.tscn")
 
-static var meta_grid_dimensions: Vector2i = Vector2i(2, 2) ## H0w many boards are in the game?
+static var meta_grid_dimensions: Vector2i = Vector2i(2, 2) ## How many boards are in the game?
 
+var flower_lists: Dictionary[Flower.FlowerType, Array] = {
+	Flower.FlowerType.FLOWER_COLOR_1: [],
+	Flower.FlowerType.FLOWER_COLOR_2: [],
+	Flower.FlowerType.FLOWER_COLOR_3: []
+}
 
 func _ready() -> void:
 	$Grid.columns = meta_grid_dimensions.x
