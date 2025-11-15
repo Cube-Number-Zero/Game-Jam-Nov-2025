@@ -11,6 +11,10 @@ var is_drawing: bool = false ## Whether or not the player is currently drawing
 static var drawing_type: Flower.FlowerType
 var drawing_cell: Vector2i
 
+
+static var boards: Array[Board] = []
+var z_dimension: int
+
 var erase_mode: bool = false
 
 const EMPTY_ATLAS_COORDS := Vector2i(-1, -1)
@@ -71,13 +75,17 @@ const DRAWABLE_ATLAS_CELLS_3: Array[Vector2i] = [
 	Flower.FlowerType.FLOWER_COLOR_3: $"TileMapLayer3"
 }
 
-var atlas_offsets: Dictionary[Flower.FlowerType, Vector2i] = {
+const ATLAS_OFFSETS: Dictionary[Flower.FlowerType, Vector2i] = {
 	Flower.FlowerType.FLOWER_COLOR_1: Vector2i(0, 0),
 	Flower.FlowerType.FLOWER_COLOR_2: Vector2i(0, 4),
 	Flower.FlowerType.FLOWER_COLOR_3: Vector2i(0, 8)
 }
 
 func _ready() -> void:
+	
+	z_dimension = len(boards)
+	boards.append(self)
+	
 	self.custom_minimum_size = Vector2.ONE * TILE_SIZE * BOARD_DIMENSIONS_CELLS
 	
 	for x: int in range(BOARD_DIMENSIONS_CELLS):
@@ -101,7 +109,7 @@ func create_flower(x_cell: int, y_cell: int, flower_type: Flower.FlowerType) -> 
 	real_flower.position = $TileMapLayer1.map_to_local(Vector2i(x_cell, y_cell))
 	real_flower.type = flower_type
 	$"../..".flower_lists[flower_type].append(real_flower)
-	flowertype[flower_type].set_cell(Vector2i(x_cell, y_cell), 0, atlas_offsets[flower_type])
+	flowertype[flower_type].set_cell(Vector2i(x_cell, y_cell), 0, ATLAS_OFFSETS[flower_type])
 
 func create_portal(x_cell: int, y_cell: int) -> Portal:
 	var real_portal: Portal = PACKED_PORTAL.instantiate()
@@ -124,11 +132,12 @@ func _physics_process(_delta: float) -> void:
 	
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE):
 		#print("----------")
-		var cell: Vector2i = $TileMapLayer1.local_to_map(get_local_mouse_position())
+		var cell: Vector2i = $TileMapLayer1.local_to_map(get_local_mouse_position() / $TileMapLayer1.scale)
 		if cell.x < 0 or cell.y < 0 or cell.x > BOARD_DIMENSIONS_CELLS or cell.y > BOARD_DIMENSIONS_CELLS:
 			return
+		var cell3d := Vector3i(cell.x, cell.y, z_dimension)
 		#get_flowers_connected_to_cell($TileMapLayer1.local_to_map(get_local_mouse_position()), Flower.FlowerType.FLOWER_COLOR_1)
-		print(len(get_flowers_connected_to_cell($TileMapLayer1.local_to_map(get_local_mouse_position()), Flower.FlowerType.FLOWER_COLOR_1)))
+		print(len(get_flowers_connected_to_cell(cell3d, Flower.FlowerType.FLOWER_COLOR_1)))
 		
 
 
@@ -145,7 +154,7 @@ func erase() -> void:
 				var layer: TileMapLayer = flowertype[type]
 				var atlascoords: Vector2i = layer.get_cell_atlas_coords(cell)
 				if atlascoords == EMPTY_ATLAS_COORDS: continue # Empty square!
-				atlascoords -= atlas_offsets[type]
+				atlascoords -= ATLAS_OFFSETS[type]
 				
 				try_to_erase_path(cell, Vector2i( 0,-1), type)
 				try_to_erase_path(cell, Vector2i( 1, 0), type)
@@ -168,7 +177,7 @@ func try_to_erase_path(cell: Vector2i, offset: Vector2i, type: Flower.FlowerType
 	var layer: TileMapLayer = flowertype[type]
 	var atlascoords = layer.get_cell_atlas_coords(cell + offset)
 	if atlascoords == EMPTY_ATLAS_COORDS: return
-	atlascoords -= atlas_offsets[type]
+	atlascoords -= ATLAS_OFFSETS[type]
 	if not ATLAS_COORDS_TO_ATLAS_INDEX.has(atlascoords):
 		if atlascoords == FLOWER_ATLAS_COORDS:
 			# Is a flower!
@@ -190,10 +199,13 @@ func try_to_erase_path(cell: Vector2i, offset: Vector2i, type: Flower.FlowerType
 		layer.erase_cell(cell + offset)
 		return
 	atlascoords = ATLAS_INDEX_TO_ATLAS_COORDS[atlasindex]
-	layer.set_cell(cell + offset, 0, atlascoords + atlas_offsets[type])
+	layer.set_cell(cell + offset, 0, atlascoords + ATLAS_OFFSETS[type])
 
-func get_cells_connected_to_cell(cell: Vector2i) -> Array[Vector2i]:
-	var returns: Array[Vector2i] = []
+static func get_cells_connected_to_cell_3d(cell: Vector3i) -> Array[Vector3i]:
+	return boards[cell.z].get_cells_connected_to_cell(Vector2i(cell.x, cell.y))
+
+func get_cells_connected_to_cell(cell: Vector2i) -> Array[Vector3i]:
+	var returns: Array[Vector3i] = []
 	for type: Flower.FlowerType in [Flower.FlowerType.FLOWER_COLOR_1, Flower.FlowerType.FLOWER_COLOR_2, Flower.FlowerType.FLOWER_COLOR_3]:
 		var layer: TileMapLayer = flowertype[drawing_type]
 		
@@ -202,7 +214,7 @@ func get_cells_connected_to_cell(cell: Vector2i) -> Array[Vector2i]:
 		if atlascoords == EMPTY_ATLAS_COORDS:
 			continue # Empty square!
 		if atlascoords != PORTAL_ATLAS_COORDS:
-			atlascoords -= atlas_offsets[type]
+			atlascoords -= ATLAS_OFFSETS[type]
 		
 		const CONNECTED_ABOVE: Array[Vector2i] = [
 			FLOWER_ATLAS_COORDS, PORTAL_ATLAS_COORDS, Vector2i(0, 1), Vector2i(0, 2), Vector2i(1, 1), Vector2i(2, 1), Vector2i(1, 3), Vector2i(2, 3)
@@ -219,22 +231,50 @@ func get_cells_connected_to_cell(cell: Vector2i) -> Array[Vector2i]:
 		
 		if atlascoords == FLOWER_ATLAS_COORDS:
 			# Cell is a flower!
-			if layer.get_cell_atlas_coords(cell + Vector2i( 0,-1)) - atlas_offsets[type] in CONNECTED_ABOVE:
-				returns.append(cell + Vector2i( 0,-1))
-			if layer.get_cell_atlas_coords(cell + Vector2i( 1, 0)) - atlas_offsets[type] in CONNECTED_RIGHT:
-				returns.append(cell + Vector2i( 1, 0))
-			if layer.get_cell_atlas_coords(cell + Vector2i( 0, 1)) - atlas_offsets[type] in CONNECTED_BELOW:
-				returns.append(cell + Vector2i( 0, 1))
-			if layer.get_cell_atlas_coords(cell + Vector2i(-1, 0)) - atlas_offsets[type] in CONNECTED_LEFT:
-				returns.append(cell + Vector2i(-1, 0))
+			if layer.get_cell_atlas_coords(cell + Vector2i( 0,-1)) - ATLAS_OFFSETS[type] in CONNECTED_ABOVE:
+				if flowertype[type].get_cell_atlas_coords(cell + Vector2i( 0,-1)) == PORTAL_ATLAS_COORDS:
+					returns.append(check_through_portal_connection(get_portal_at_cell(cell + Vector2i( 0,-1)), Vector2i( 0,-1), type))
+				else:
+					returns.append(Vector3i(cell.x, cell.y - 1, z_dimension))
+			if layer.get_cell_atlas_coords(cell + Vector2i( 1, 0)) - ATLAS_OFFSETS[type] in CONNECTED_RIGHT:
+				if flowertype[type].get_cell_atlas_coords(cell + Vector2i( 1, 0)) == PORTAL_ATLAS_COORDS:
+					returns.append(check_through_portal_connection(get_portal_at_cell(cell + Vector2i( 1, 0)), Vector2i( 1, 0), type))
+				else:
+					returns.append(Vector3i(cell.x + 1, cell.y, z_dimension))
+			if layer.get_cell_atlas_coords(cell + Vector2i( 0, 1)) - ATLAS_OFFSETS[type] in CONNECTED_BELOW:
+				if flowertype[type].get_cell_atlas_coords(cell + Vector2i( 0, 1)) == PORTAL_ATLAS_COORDS:
+					returns.append(check_through_portal_connection(get_portal_at_cell(cell + Vector2i( 0, 1)), Vector2i( 0, 1), type))
+				else:
+					returns.append(Vector3i(cell.x, cell.y + 1, z_dimension))
+			if layer.get_cell_atlas_coords(cell + Vector2i(-1, 0)) - ATLAS_OFFSETS[type] in CONNECTED_LEFT:
+				if flowertype[type].get_cell_atlas_coords(cell + Vector2i(-1, 0)) == PORTAL_ATLAS_COORDS:
+					returns.append(check_through_portal_connection(get_portal_at_cell(cell + Vector2i(-1, 0)), Vector2i(-1, 0), type))
+				else:
+					returns.append(Vector3i(cell.x - 1, cell.y, z_dimension))
 		elif atlascoords == PORTAL_ATLAS_COORDS:
-			pass
+			return []
 		elif ATLAS_COORDS_TO_ATLAS_INDEX.has(atlascoords):
 			var atlasindex: int = ATLAS_COORDS_TO_ATLAS_INDEX[atlascoords]
-			if atlasindex & 0x1: returns.append(cell + Vector2i( 0,-1))
-			if atlasindex & 0x2: returns.append(cell + Vector2i( 1, 0))
-			if atlasindex & 0x4: returns.append(cell + Vector2i( 0, 1))
-			if atlasindex & 0x8: returns.append(cell + Vector2i(-1, 0))
+			if atlasindex & 0x1:
+				if flowertype[type].get_cell_atlas_coords(cell + Vector2i( 0,-1)) == PORTAL_ATLAS_COORDS:
+					returns.append(check_through_portal_connection(get_portal_at_cell(cell + Vector2i( 0,-1)), Vector2i( 0,-1), type))
+				else:
+					returns.append(Vector3i(cell.x, cell.y - 1, z_dimension))
+			if atlasindex & 0x2:
+				if flowertype[type].get_cell_atlas_coords(cell + Vector2i( 1, 0)) == PORTAL_ATLAS_COORDS:
+					returns.append(check_through_portal_connection(get_portal_at_cell(cell + Vector2i( 1, 0)), Vector2i( 1, 0), type))
+				else:
+					returns.append(Vector3i(cell.x + 1, cell.y, z_dimension))
+			if atlasindex & 0x4:
+				if flowertype[type].get_cell_atlas_coords(cell + Vector2i( 0, 1)) == PORTAL_ATLAS_COORDS:
+					returns.append(check_through_portal_connection(get_portal_at_cell(cell + Vector2i( 0, 1)), Vector2i( 0, 1), type))
+				else:
+					returns.append(Vector3i(cell.x, cell.y + 1, z_dimension))
+			if atlasindex & 0x8:
+				if flowertype[type].get_cell_atlas_coords(cell + Vector2i(-1, 0)) == PORTAL_ATLAS_COORDS:
+					returns.append(check_through_portal_connection(get_portal_at_cell(cell + Vector2i(-1, 0)), Vector2i(-1, 0), type))
+				else:
+					returns.append(Vector3i(cell.x - 1, cell.y, z_dimension))
 		else:
 			#Overpass!
 			pass
@@ -258,7 +298,7 @@ func draw() -> void:
 					var atlascoords: Vector2i = ATLAS_INDEX_TO_ATLAS_COORDS[INVERT_ATLAS_INDEX[atlasindex]]
 					
 					# Set previous cell's atlas
-					var previous_atlas_coords = layer.get_cell_atlas_coords(drawing_cell) - atlas_offsets[drawing_type]
+					var previous_atlas_coords = layer.get_cell_atlas_coords(drawing_cell) - ATLAS_OFFSETS[drawing_type]
 					
 					if ATLAS_COORDS_TO_ATLAS_INDEX.has(previous_atlas_coords):
 						# Update previous cell
@@ -266,24 +306,24 @@ func draw() -> void:
 						var new_atlas_index = previous_atlas_index ^ atlasindex
 						if ATLAS_INDEX_TO_ATLAS_COORDS.has(new_atlas_index):
 							var new_atlas_coords = ATLAS_INDEX_TO_ATLAS_COORDS[new_atlas_index]
-							layer.set_cell(drawing_cell, 0, new_atlas_coords + atlas_offsets[drawing_type])
+							layer.set_cell(drawing_cell, 0, new_atlas_coords + ATLAS_OFFSETS[drawing_type])
 					
 					const DEAD_ENDS: Array[Vector2i] = [Vector2i(1, 0), Vector2i(3, 0), Vector2i(0, 1), Vector2i(0, 3)]
 					
-					if layer.get_cell_atlas_coords(cell) - atlas_offsets[drawing_type] in DEAD_ENDS:
+					if layer.get_cell_atlas_coords(cell) - ATLAS_OFFSETS[drawing_type] in DEAD_ENDS:
 						# cell is already a dead end, so connect them and finish drawing
 						atlasindex = INVERT_ATLAS_INDEX[atlasindex] # i don't know why i need to do this
-						atlasindex |= ATLAS_COORDS_TO_ATLAS_INDEX[layer.get_cell_atlas_coords(cell) - atlas_offsets[drawing_type]]
+						atlasindex |= ATLAS_COORDS_TO_ATLAS_INDEX[layer.get_cell_atlas_coords(cell) - ATLAS_OFFSETS[drawing_type]]
 						atlascoords = ATLAS_INDEX_TO_ATLAS_COORDS[atlasindex]
 						is_drawing = false
 					
-					if layer.get_cell_atlas_coords(cell) in [atlas_offsets[drawing_type], PORTAL_ATLAS_COORDS]:
+					if layer.get_cell_atlas_coords(cell) in [ATLAS_OFFSETS[drawing_type], PORTAL_ATLAS_COORDS]:
 						# SPECIAL CASE: Was a flower or portal!
 						if layer.get_cell_atlas_coords(cell) == PORTAL_ATLAS_COORDS:
 							# Draw through a portal!!!!!
 							draw_through_portal(get_portal_at_cell(cell), cell - drawing_cell)
 					else:
-						layer.set_cell(cell, 0, atlascoords + atlas_offsets[drawing_type])
+						layer.set_cell(cell, 0, atlascoords + ATLAS_OFFSETS[drawing_type])
 					drawing_cell = cell
 				else:
 					# Didn't move orthogonally. Do nothing and stop drawing
@@ -325,7 +365,7 @@ func draw_through_portal(portal: Portal, direction: Vector2i) -> void:
 	match atlascoords2:
 		EMPTY_ATLAS_COORDS:
 			var atlasindex: int = INVERT_ATLAS_INDEX[VECTOR_TO_ATLAS_INDEX[direction]]
-			var atlascoords: Vector2i = ATLAS_INDEX_TO_ATLAS_COORDS[atlasindex] + atlas_offsets[drawing_type]
+			var atlascoords: Vector2i = ATLAS_INDEX_TO_ATLAS_COORDS[atlasindex] + ATLAS_OFFSETS[drawing_type]
 			tilelayer2.set_cell(portal2.cell + direction, 0, atlascoords)
 		PORTAL_ATLAS_COORDS:
 			if get_portal_at_cell(portal2.cell + direction) == portal:
@@ -337,8 +377,8 @@ func draw_through_portal(portal: Portal, direction: Vector2i) -> void:
 			return
 		_:
 			var atlasindex: int = INVERT_ATLAS_INDEX[VECTOR_TO_ATLAS_INDEX[direction]]
-			atlasindex |= ATLAS_COORDS_TO_ATLAS_INDEX[atlascoords2 - atlas_offsets[drawing_type]]
-			var atlascoords: Vector2i = ATLAS_INDEX_TO_ATLAS_COORDS[atlasindex] + atlas_offsets[drawing_type]
+			atlasindex |= ATLAS_COORDS_TO_ATLAS_INDEX[atlascoords2 - ATLAS_OFFSETS[drawing_type]]
+			var atlascoords: Vector2i = ATLAS_INDEX_TO_ATLAS_COORDS[atlasindex] + ATLAS_OFFSETS[drawing_type]
 			tilelayer2.set_cell(portal2.cell + direction, 0, atlascoords)
 			
 	
@@ -376,90 +416,57 @@ func get_flower_at_cell(cell: Vector2i) -> Flower:
 	# No portals found
 	return null
 
-func get_flowers_connected_to_cell(cell: Vector2i, type: Flower.FlowerType, found_so_far: Dictionary[Board, Array] = {}, already_traversed_portals: Dictionary[Portal, Array] = {}) -> Array[Flower]:
+static func get_flowers_connected_to_cell(cell: Vector3i, type: Flower.FlowerType) -> Array[Flower]:
 	var returns: Array[Flower] = []
 	
-	var newfound: Array[Vector2i] = [cell]
-	var cells_in_other_boards_to_check: Dictionary[Board, Array] = {}
-	
-	if found_so_far.is_empty():
-		for board: Board in $"..".get_children():
-			found_so_far[board] = []
-			
-	for board: Board in $"..".get_children():
-		cells_in_other_boards_to_check[board] = []
+	var found: Array[Vector3i] = []
+	var newfound: Array[Vector3i] = [cell]
 	
 	while len(newfound):
-		var new_cells: Array[Vector2i] = get_cells_connected_to_cell(newfound[0])
+		if boards[newfound[0].z].flowertype[type].get_cell_atlas_coords(Vector2i(newfound[0].x, newfound[0].y)) in ATLAS_OFFSETS.values():
+			returns.append(boards[newfound[0].z].get_flower_at_cell(Vector2i(newfound[0].x, newfound[0].y)))
 		
-		for cell2: Vector2i in new_cells:
-			if newfound.is_empty(): break
-			#print(cell2)
-			#print(flowertype[type].get_cell_atlas_coords(newfound[0]))
-			if flowertype[type].get_cell_atlas_coords(cell2) == PORTAL_ATLAS_COORDS:
-				var portal: Portal = get_portal_at_cell(cell2)
-				var vector: Vector2i = newfound[0] - cell2
-				
-				if already_traversed_portals.has(portal):
-					if vector in already_traversed_portals[portal]:
-						# Already been here!
-						continue
-				
-				var cell_on_other_side: Array = check_through_portal_connection(portal, vector, type)
-				if !cell_on_other_side.is_empty():
-					assert(cell_on_other_side[0] is Board)
-					cells_in_other_boards_to_check[cell_on_other_side[0]].append(cell_on_other_side[1])
-				
-				if already_traversed_portals.has(portal):
-					already_traversed_portals[portal].append(vector)
-					already_traversed_portals[portal.linked_portal].append(-vector)
-				else:
-					already_traversed_portals.set(portal, [vector])
-					already_traversed_portals.set(portal.linked_portal, [-vector])
-				break
-			elif not (cell2 in found_so_far[self] or cell2 in newfound):
-				newfound.append(cell2)
+		var adjacent: Array[Vector3i] = get_cells_connected_to_cell_3d(newfound[0])
+		adjacent.erase(Vector3i(-1, -1, -1))
 		
+		for adjacent_cell: Vector3i in adjacent:
+			if not (adjacent_cell in newfound or adjacent_cell in found):
+				newfound.append(adjacent_cell)
 		
-		if flowertype[type].get_cell_atlas_coords(newfound[0]) == atlas_offsets[type]:
-			returns.append(get_flower_at_cell(newfound[0]))
-		found_so_far[self].append(newfound[0])
+		found.append(newfound[0])
 		newfound.erase(newfound[0])
 	
-	for board: Board in cells_in_other_boards_to_check.keys():
-		for other_board_cell: Vector2i in cells_in_other_boards_to_check[board]:
-			#print("OTHER BOARD {")
-			returns.append_array(board.get_flowers_connected_to_cell(other_board_cell, type, found_so_far, already_traversed_portals))
-			#print("} OTHER BOARD")
 	
 	return returns
 
-func check_through_portal_connection(portal: Portal, direction: Vector2i, type: Flower.FlowerType) -> Array:
+func check_through_portal_connection(portal: Portal, direction: Vector2i, type: Flower.FlowerType) -> Vector3i:
+	const NULL_RETURN := Vector3i(-1, -1, -1)
+	
 	var portal2: Portal = portal.linked_portal
 	var board2: Board = portal2.get_node(^"../..")
 	var layer2: TileMapLayer = board2.flowertype[type]
 	
-	var atlascoords2: Vector2i = layer2.get_cell_atlas_coords(portal2.cell - direction)
+	var atlascoords2: Vector2i = layer2.get_cell_atlas_coords(portal2.cell + direction)
 	
 	if atlascoords2 == EMPTY_ATLAS_COORDS:
-		return []
+		return NULL_RETURN
 	elif atlascoords2 == PORTAL_ATLAS_COORDS:
-		return check_through_portal_connection(board2.get_portal_at_cell(portal2.cell - direction), direction, type)
+		return check_through_portal_connection(board2.get_portal_at_cell(portal2.cell + direction), direction, type)
 	else:
-		atlascoords2 -= atlas_offsets[type]
+		atlascoords2 -= ATLAS_OFFSETS[type]
 		if atlascoords2 == FLOWER_ATLAS_COORDS:
 			# Flower
-			return [board2, portal2.cell - direction]
+			return Vector3i(portal2.cell.x + direction.x, portal2.cell.y + direction.y, board2.z_dimension)
 		elif ATLAS_COORDS_TO_ATLAS_INDEX.has(atlascoords2):
 			# Normal cell!
-			var index_to_test: int = VECTOR_TO_ATLAS_INDEX[direction]
+			var index_to_test: int = INVERT_ATLAS_INDEX[VECTOR_TO_ATLAS_INDEX[direction]]
 			if index_to_test & ATLAS_COORDS_TO_ATLAS_INDEX[atlascoords2]:
-				return [board2, portal2.cell - direction]
+				return Vector3i(portal2.cell.x + direction.x, portal2.cell.y + direction.y, board2.z_dimension)
 			else:
-				return []
+				return NULL_RETURN
 		else:
 			pass # Overpass
-			return []
+			return NULL_RETURN
 
 
 #endregion
