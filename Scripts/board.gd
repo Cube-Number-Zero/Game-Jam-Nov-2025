@@ -15,7 +15,7 @@ var drawing_cell: Vector2i
 static var boards: Array[Board] = []
 var z_dimension: int
 
-var erase_mode: bool = false
+static var erase_mode: bool = false
 
 const EMPTY_ATLAS_COORDS := Vector2i(-1, -1)
 const FLOWER_ATLAS_COORDS := Vector2i(0, 0)
@@ -126,19 +126,7 @@ func _physics_process(_delta: float) -> void:
 		erase()
 	else:
 		draw()
-	# Testing toggle for erase mode
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
-		erase_mode = true
-	
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE):
-		#print("----------")
-		var cell: Vector2i = $TileMapLayer1.local_to_map(get_local_mouse_position() / $TileMapLayer1.scale)
-		if cell.x < 0 or cell.y < 0 or cell.x > BOARD_DIMENSIONS_CELLS or cell.y > BOARD_DIMENSIONS_CELLS:
-			return
-		var cell3d := Vector3i(cell.x, cell.y, z_dimension)
-		#get_flowers_connected_to_cell($TileMapLayer1.local_to_map(get_local_mouse_position()), Flower.FlowerType.FLOWER_COLOR_1)
-		print(len(get_flowers_connected_to_cell(cell3d, Flower.FlowerType.FLOWER_COLOR_1)))
-		
+
 
 
 #region black magic
