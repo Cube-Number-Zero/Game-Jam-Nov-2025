@@ -1,0 +1,87 @@
+[gd_scene load_steps=3 format=3 uid="uid://6txbs7socqht"]
+
+[ext_resource type="Texture2D" uid="uid://b182da2dydbs6" path="res://Assets/button.png" id="1_0gua7"]
+[ext_resource type="Script" uid="uid://barh0tkeyjwg" path="res://Scripts/game_over_screen.gd" id="1_jb6in"]
+
+[node name="GameOverScreen" type="Node2D"]
+script = ExtResource("1_jb6in")
+
+[node name="gameover_canvas" type="CanvasLayer" parent="."]
+process_mode = 3
+
+[node name="background" type="TextureRect" parent="gameover_canvas"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="restart_button" type="TextureButton" parent="gameover_canvas"]
+top_level = true
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -140.0
+offset_right = -100.0
+offset_bottom = -60.0
+grow_horizontal = 0
+grow_vertical = 2
+texture_normal = ExtResource("1_0gua7")
+metadata/_edit_use_anchors_ = true
+
+[node name="quit_button" type="TextureButton" parent="gameover_canvas"]
+top_level = true
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = 20.0
+offset_right = -100.0
+offset_bottom = 100.0
+grow_horizontal = 0
+grow_vertical = 2
+texture_normal = ExtResource("1_0gua7")
+metadata/_edit_use_anchors_ = true
+
+[node name="final_score_text" type="RichTextLabel" parent="gameover_canvas"]
+offset_left = 116.0
+offset_top = 330.0
+offset_right = 534.0
+offset_bottom = 442.0
+theme_override_colors/default_color = Color(0.266667, 0.133333, 0.129412, 1)
+theme_override_font_sizes/normal_font_size = 40
+text = "Your Final Score Is:
+0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="gameover_text" type="RichTextLabel" parent="gameover_canvas"]
+offset_left = 96.0
+offset_top = 120.0
+offset_right = 554.0
+offset_bottom = 196.0
+theme_override_colors/default_color = Color(0.266667, 0.133333, 0.129412, 1)
+theme_override_font_sizes/normal_font_size = 50
+text = "Game Over"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="gameover_explain_text" type="RichTextLabel" parent="gameover_canvas"]
+offset_left = 96.0
+offset_top = 190.0
+offset_right = 554.0
+offset_bottom = 286.0
+theme_override_colors/default_color = Color(0.266667, 0.133333, 0.129412, 1)
+theme_override_font_sizes/normal_font_size = 24
+text = "You took to long, and your garden wilted :("
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="gameover_canvas/restart_button" to="." method="_on_restart"]
+[connection signal="pressed" from="gameover_canvas/quit_button" to="." method="_on_quit"]

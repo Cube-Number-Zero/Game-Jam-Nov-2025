@@ -1,0 +1,105 @@
+[gd_scene load_steps=9 format=3 uid="uid://cbyffljkxcmwn"]
+
+[ext_resource type="Script" uid="uid://b25xtgg0ic3ax" path="res://Scripts/menu.gd" id="1_dxfxl"]
+[ext_resource type="Texture2D" uid="uid://c8n0blxlgg68x" path="res://Assets/Backgrd.png" id="2_30v54"]
+[ext_resource type="Texture2D" uid="uid://csnelc07c3qju" path="res://Assets/textureBarBottom.png" id="2_rdv7x"]
+[ext_resource type="Texture2D" uid="uid://bdq34t7kjbr5g" path="res://Assets/textureBarProgress.png" id="3_6eath"]
+[ext_resource type="Texture2D" uid="uid://b182da2dydbs6" path="res://Assets/button.png" id="4_6eath"]
+[ext_resource type="Script" uid="uid://djjhjiuy6whjk" path="res://Scripts/score_text.gd" id="5_6jpsg"]
+[ext_resource type="PackedScene" uid="uid://cm86hkmpa877n" path="res://Scenes/pause_menu.tscn" id="5_10i0i"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_6eath"]
+
+[node name="gameplay_menu" type="Control"]
+layout_mode = 3
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+script = ExtResource("1_dxfxl")
+
+[node name="gameplay_ui" type="CanvasLayer" parent="."]
+
+[node name="background_base" type="ColorRect" parent="."]
+top_level = true
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+
+[node name="background_sprite" type="Sprite2D" parent="background_base"]
+texture = ExtResource("2_30v54")
+centered = false
+
+[node name="time_left_progress_bar" type="TextureProgressBar" parent="background_base"]
+layout_mode = 0
+offset_left = 421.0
+offset_top = 7.0
+offset_right = 500.0
+offset_bottom = 643.0
+value = 75.0
+fill_mode = 3
+texture_under = ExtResource("2_rdv7x")
+texture_progress = ExtResource("3_6eath")
+
+[node name="score_text_label" type="RichTextLabel" parent="background_base"]
+layout_mode = 1
+offset_left = 12.0
+offset_top = 100.0
+offset_right = 430.0
+offset_bottom = 128.0
+theme_override_colors/default_color = Color(0.266667, 0.133333, 0.129412, 1)
+theme_override_font_sizes/normal_font_size = 20
+text = "Score: 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("5_6jpsg")
+
+[node name="timer" type="Timer" parent="background_base/score_text_label"]
+wait_time = 10.0
+autostart = true
+
+[node name="title_texture" type="TextureRect" parent="background_base"]
+layout_mode = 1
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 412.0
+offset_bottom = 92.0
+texture = SubResource("PlaceholderTexture2D_6eath")
+
+[node name="erase_button" type="TextureButton" parent="background_base"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 228.0
+offset_top = -92.0
+offset_right = 428.0
+offset_bottom = -12.0
+grow_vertical = 0
+toggle_mode = true
+texture_normal = ExtResource("4_6eath")
+
+[node name="pause_menu" parent="background_base" instance=ExtResource("5_10i0i")]
+visible = false
+layout_mode = 1
+
+[node name="pause_button" type="TextureButton" parent="background_base"]
+process_mode = 3
+top_level = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = -92.0
+offset_right = 212.0
+offset_bottom = -12.0
+grow_vertical = 0
+action_mode = 0
+texture_normal = ExtResource("4_6eath")
+
+[connection signal="resized" from="." to="." method="_on_resized"]
+[connection signal="timeout" from="background_base/score_text_label/timer" to="background_base/score_text_label" method="_on_timer_timeout"]
+[connection signal="toggled" from="background_base/erase_button" to="." method="_on_erase"]
+[connection signal="pressed" from="background_base/pause_button" to="." method="_on_pause"]
+[connection signal="toggled" from="background_base/pause_button" to="." method="_on_pause"]

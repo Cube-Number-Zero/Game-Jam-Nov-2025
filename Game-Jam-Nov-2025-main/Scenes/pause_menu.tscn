@@ -1,0 +1,68 @@
+[gd_scene load_steps=4 format=3 uid="uid://cm86hkmpa877n"]
+
+[ext_resource type="Script" uid="uid://bpsfqqoqbm3ii" path="res://Scripts/pause_menu.gd" id="1_1och7"]
+[ext_resource type="Texture2D" uid="uid://b182da2dydbs6" path="res://Assets/button.png" id="4_u8tnp"]
+[ext_resource type="Texture2D" uid="uid://caokrxhmtbcgm" path="res://Assets/SoundIcon.png" id="5_stj27"]
+
+[node name="pause_menu" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+script = ExtResource("1_1och7")
+
+[node name="background_base" type="ColorRect" parent="."]
+top_level = true
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="background_base"]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.27, 0.13689, 0.1323, 0.286275)
+
+[node name="volume_slider" type="HSlider" parent="background_base"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 80.0
+offset_top = -74.0
+offset_right = 380.0
+offset_bottom = -26.0
+grow_vertical = 2
+value = 25.0
+
+[node name="volume_button" type="TextureButton" parent="background_base"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 12.0
+offset_top = -74.0
+offset_right = 54.0
+offset_bottom = -42.0
+grow_vertical = 2
+scale = Vector2(1.5, 1.5)
+texture_normal = ExtResource("5_stj27")
+
+[node name="restart_button" type="TextureButton" parent="background_base"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 120.0
+offset_top = -2.0
+offset_right = 320.0
+offset_bottom = 78.0
+grow_vertical = 2
+texture_normal = ExtResource("4_u8tnp")
+
+[connection signal="resized" from="." to="." method="_on_resized"]
+[connection signal="drag_ended" from="background_base/volume_slider" to="." method="_on_volume_change"]
+[connection signal="pressed" from="background_base/volume_button" to="." method="_on_mute"]
+[connection signal="pressed" from="background_base/restart_button" to="." method="_on_restart"]
