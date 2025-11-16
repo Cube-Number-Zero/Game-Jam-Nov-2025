@@ -51,4 +51,5 @@ func delete_portal_pair() -> void:
 	update_colors()
 
 func _on_portal_removal_timer_timeout() -> void:
-	check_for_portal_decay()
+	if randf() <= PORTAL_REMOVAL_CHANCE:
+		check_for_portal_decay()

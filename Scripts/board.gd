@@ -138,13 +138,33 @@ func delete_portal(cell: Vector2i) -> void:
 
 #region dark magic
 
-func count_flower_connections(cell: Vector2i) -> int:
-	# Determine flower type
+func remove_flower(cell: Vector2i) -> void:
+	var type: Flower.FlowerType = determine_flower_type(cell)
+	
+	var replace_atlasindex: int = 0
+	
+	if does_cell_have_connection(cell, type, Vector2i( 0,-1)): replace_atlasindex |= 1
+	if does_cell_have_connection(cell, type, Vector2i( 1, 0)): replace_atlasindex |= 2
+	if does_cell_have_connection(cell, type, Vector2i( 0, 1)): replace_atlasindex |= 4
+	if does_cell_have_connection(cell, type, Vector2i(-1, 0)): replace_atlasindex |= 8
+	
+	var replace_atlascoords: Vector2i = ATLAS_INDEX_TO_ATLAS_COORDS[replace_atlasindex] + ATLAS_OFFSETS[type]
+	
+	flowertype[type].set_cell(cell, 0, replace_atlascoords)
+	
+	
+
+func determine_flower_type(cell: Vector2i) -> Flower.FlowerType:
 	var type: Flower.FlowerType
 	for test_type: Flower.FlowerType in Flower.FLOWER_TYPES:
 		if flowertype[test_type].get_cell_atlas_coords(cell) == ATLAS_OFFSETS[test_type]:
 			type = test_type
 			break
+	return type
+
+func count_flower_connections(cell: Vector2i) -> int:
+	# Determine flower type
+	var type: Flower.FlowerType = determine_flower_type(cell)
 	
 	var count: int = 0
 	
