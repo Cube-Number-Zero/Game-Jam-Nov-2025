@@ -22,6 +22,8 @@ func _process(_delta: float) -> void:
 static func link_portals(portal1: Portal, portal2: Portal) -> void:
 	portal1.linked_portal = portal2
 	portal2.linked_portal = portal1
+	portal1.get_node(^"AudioStreamPlayer2D").play()
+	portal2.get_node(^"AudioStreamPlayer2D").play()
 
 static func update_colors() -> void:
 	for i: int in range(len(all_portal_list)):

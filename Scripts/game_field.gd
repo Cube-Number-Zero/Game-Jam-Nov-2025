@@ -3,7 +3,7 @@ class_name GameField extends Control
 
 const PACKED_BOARD: PackedScene = preload("res://Scenes/board.tscn")
 
-static var meta_grid_dimensions: Vector2i = Vector2i(2, 2) ## How many boards are in the game?
+static var meta_grid_dimensions: Vector2i = Vector2i(3, 3) ## How many boards are in the game?
 
 # i changed this one - i hope it dont fuck up
 static var disconnected_regions: Dictionary[Flower.FlowerType, int] = {
@@ -69,9 +69,9 @@ func create_random_portals() -> void:
 	var coords2 := Vector3i(-1, -1, -1)
 	while coords1 == Vector3i(-1, -1, -1):
 		var board: Board = $Grid.get_children().pick_random()
-		var x: int = randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1)
-		var y: int = randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1)
-		if x in [0, Board.BOARD_DIMENSIONS_CELLS - 1] and y in [0, Board.BOARD_DIMENSIONS_CELLS - 1]:
+		var x: int = randi_range(0, Board.board_dimensions_cells - 1)
+		var y: int = randi_range(0, Board.board_dimensions_cells - 1)
+		if x in [0, Board.board_dimensions_cells - 1] and y in [0, Board.board_dimensions_cells - 1]:
 			# In a corner
 			continue
 		elif board.is_empty_at_cell(Vector2i(x, y)):
@@ -81,8 +81,8 @@ func create_random_portals() -> void:
 			if not attempts_left: return # Board was too full. Fail.
 	while coords2 == Vector3i(-1, -1, -1):
 		var board: Board = $Grid.get_children().pick_random()
-		var x: int = randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1)
-		var y: int = randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1)
+		var x: int = randi_range(0, Board.board_dimensions_cells - 1)
+		var y: int = randi_range(0, Board.board_dimensions_cells - 1)
 		if board.is_empty_at_cell(Vector2i(x, y)):
 			coords2 = Vector3i(x, y, board.z_dimension)
 		else:
@@ -98,13 +98,13 @@ func create_random_portals() -> void:
 ## Resizes the game world to fit the screen.
 func calculate_scale() -> void:
 	self.custom_minimum_size.x = self.size.y
-	var single_board_width: int = Board.TILE_SIZE * Board.BOARD_DIMENSIONS_CELLS
+	var single_board_width: int = Board.TILE_SIZE * Board.board_dimensions_cells
 	var boards_dimensions: Vector2i = single_board_width * meta_grid_dimensions
 	var scale_x: float = self.size.x / boards_dimensions.x
 	var scale_y: float = self.size.y / boards_dimensions.y
 	var scale_min: float = minf(scale_x, scale_y)
 	for board: Board in $Grid.get_children():
-		board.custom_minimum_size = Vector2.ONE * Board.TILE_SIZE * Board.BOARD_DIMENSIONS_CELLS * scale_min
+		board.custom_minimum_size = Vector2.ONE * Board.TILE_SIZE * Board.board_dimensions_cells * scale_min
 	call_deferred(&"resize_boards", scale_min)
 	
 

@@ -5,7 +5,7 @@ const PACKED_FLOWER: PackedScene = preload("res://Scenes/flower.tscn")
 const PACKED_PORTAL: PackedScene = preload("res://Scenes/portal.tscn")
 
 const TILE_SIZE: int = 26 ## The height/width of tiles, in pixels
-const BOARD_DIMENSIONS_CELLS: int = 12 ## The width of the board, in cells
+static var board_dimensions_cells: int = 12 ## The width of the board, in cells
 
 var is_drawing: bool = false ## Whether or not the player is currently drawing
 static var drawing_type: Flower.FlowerType
@@ -86,16 +86,16 @@ func _ready() -> void:
 	z_dimension = len(boards)
 	boards.append(self)
 	
-	self.custom_minimum_size = Vector2.ONE * TILE_SIZE * BOARD_DIMENSIONS_CELLS
+	self.custom_minimum_size = Vector2.ONE * TILE_SIZE * board_dimensions_cells
 	
-	for x: int in range(BOARD_DIMENSIONS_CELLS):
-		for y: int in range(BOARD_DIMENSIONS_CELLS):
+	for x: int in range(board_dimensions_cells):
+		for y: int in range(board_dimensions_cells):
 			$BackgroundTiles.set_cell(Vector2i(x, y), 0, Vector2i(randi_range(0, 4), 13))
 
 
 func create_flower_at_random_location(type: Flower.FlowerType):
-	var x: int = randi_range(0, BOARD_DIMENSIONS_CELLS - 1)
-	var y: int = randi_range(0, BOARD_DIMENSIONS_CELLS - 1)
+	var x: int = randi_range(0, board_dimensions_cells - 1)
+	var y: int = randi_range(0, board_dimensions_cells - 1)
 	if is_empty_at_cell(Vector2i(x, y)):
 		create_flower(x, y, type)
 
@@ -109,6 +109,7 @@ func create_flower(x_cell: int, y_cell: int, flower_type: Flower.FlowerType) -> 
 	$"../..".flower_lists[flower_type].append(real_flower)
 	real_flower.cell = Vector2i(x_cell, y_cell)
 	flowertype[flower_type].set_cell(Vector2i(x_cell, y_cell), 0, ATLAS_OFFSETS[flower_type])
+	real_flower.start_particles()
 
 func create_portal(x_cell: int, y_cell: int) -> Portal:
 	var real_portal: Portal = PACKED_PORTAL.instantiate()
@@ -238,7 +239,7 @@ func erase() -> void:
 	else:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			var cell: Vector2i = $TileMapLayer1.local_to_map(get_local_mouse_position() / $TileMapLayer1.scale)
-			if cell.x < 0 or cell.y < 0 or cell.x >= BOARD_DIMENSIONS_CELLS or cell.y >= BOARD_DIMENSIONS_CELLS:
+			if cell.x < 0 or cell.y < 0 or cell.x >= board_dimensions_cells or cell.y >= board_dimensions_cells:
 				# Out of this board's bounds
 				return
 			is_drawing = true
@@ -404,7 +405,7 @@ func draw() -> void:
 	else:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			var cell: Vector2i = $TileMapLayer1.local_to_map(get_local_mouse_position() / $TileMapLayer1.scale)
-			if cell.x < 0 or cell.y < 0 or cell.x >= BOARD_DIMENSIONS_CELLS or cell.y >= BOARD_DIMENSIONS_CELLS:
+			if cell.x < 0 or cell.y < 0 or cell.x >= board_dimensions_cells or cell.y >= board_dimensions_cells:
 				# Out of this board's bounds
 				return
 			# Test to see if the player is clicking on a drawable cell
@@ -453,7 +454,7 @@ func draw_through_portal(portal: Portal, direction: Vector2i) -> void:
 			
 
 func can_draw_at(cell: Vector2i) -> bool:
-	if cell.x < 0 or cell.y < 0 or cell.x >= BOARD_DIMENSIONS_CELLS or cell.y >= BOARD_DIMENSIONS_CELLS:
+	if cell.x < 0 or cell.y < 0 or cell.x >= board_dimensions_cells or cell.y >= board_dimensions_cells:
 		return false # out of bounds
 	
 	if $TileMapLayer1.get_cell_atlas_coords(cell) != PORTAL_ATLAS_COORDS:

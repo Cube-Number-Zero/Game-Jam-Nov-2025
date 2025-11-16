@@ -1,6 +1,6 @@
 extends Control
 
-static var meta_grid_dimensions: Vector2i = Vector2i(3, 3) ## How many boards are in the game?
+static var meta_grid_dimensions: Vector2i = Vector2i(2, 2) ## How many boards are in the game?
 
 const PACKED_BOARD: PackedScene = preload("res://Scenes/board.tscn")
 

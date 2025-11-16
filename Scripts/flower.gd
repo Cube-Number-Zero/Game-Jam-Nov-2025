@@ -2,13 +2,23 @@ class_name Flower extends Node2D
 
 enum FlowerType {FLOWER_COLOR_1, FLOWER_COLOR_2, FLOWER_COLOR_3}
 
-const FLOWER_TYPES: Array[Flower.FlowerType] = [Flower.FlowerType.FLOWER_COLOR_1, Flower.FlowerType.FLOWER_COLOR_2, Flower.FlowerType.FLOWER_COLOR_3]
+const FLOWER_TYPES: Array[FlowerType] = [FlowerType.FLOWER_COLOR_1, FlowerType.FLOWER_COLOR_2, FlowerType.FLOWER_COLOR_3]
+
+const PARTICLE_TEXTURES: Dictionary[FlowerType, Resource] = {
+	FlowerType.FLOWER_COLOR_1: preload("res://Assets/flowerparticle1.png"),
+	FlowerType.FLOWER_COLOR_2: preload("res://Assets/flowerparticle2.png"),
+	FlowerType.FLOWER_COLOR_3: preload("res://Assets/flowerparticle3.png")
+}
 
 var type: FlowerType
 
 var cell: Vector2i
 
-const FLOWER_REMOVAL_CHANCE: float = 0.2 ## The odds this flower will be removed when FlowerRemovalTimer expires, if possible
+const FLOWER_REMOVAL_CHANCE: float = 0.1 ## The odds this flower will be removed when FlowerRemovalTimer expires, if possible
+
+func start_particles() -> void:
+	$CPUParticles2D.texture = PARTICLE_TEXTURES[type]
+	$CPUParticles2D.call_deferred(&"restart")
 
 func check_for_flower_decay() -> void:
 	var connections: int = $"../..".count_flower_connections(cell)
@@ -22,3 +32,7 @@ func _on_flower_removal_timer_timeout() -> void:
 	if randf() <= FLOWER_REMOVAL_CHANCE:
 		if len($"../../../..".flower_lists[type]) > 3: # Don't erase flowers when there are fewer than three of thi type
 			check_for_flower_decay()
+
+
+func _on_cpu_particles_2d_finished() -> void:
+	$CPUParticles2D.queue_free()

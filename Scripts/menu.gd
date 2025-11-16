@@ -39,14 +39,14 @@ func _on_pause() -> void:
 
 func _on_erase(toggled_on: bool) -> void:
 	if (toggled_on == true): # we are erasing
-		#icon is changed to draw icon
-		erase_button.set_texture_normal(draw_icon)
+		#icon is changed to erase icon
+		erase_button.set_texture_normal(erase_icon)
 		#link to do erasing?
 		Board.erase_mode = true
 		
 	else: #we are drawing
-		#icon is changed to erase icon
-		erase_button.set_texture_normal(erase_icon)
+		#icon is changed to draw icon
+		erase_button.set_texture_normal(draw_icon)
 		Board.erase_mode = false
 		#do drawing?
 		
@@ -62,13 +62,9 @@ func gameover(final_score: int) -> void:
 	
 func check_flowers() -> void:
 	var amount = 0
-	if flower_1_regions > 1:
-		amount += 1
-	if flower_2_regions > 1:
-		amount += 1
-	if flower_3_regions > 1:
-		amount +=1
-	#print(amount)
+	amount += max(1, flower_1_regions) - 1
+	amount += max(1, flower_2_regions) - 1
+	amount += max(1, flower_3_regions) - 1
 	if amount > 0:
 		decrease_health(amount)
 	else:
@@ -78,22 +74,17 @@ func check_flowers() -> void:
 		
 		
 func decrease_health(amount: int) -> void:
-	#print("decreasing")
-	if (amount == 1):
-		remove_health = 1
-	elif (amount == 2):
-		remove_health = 1.75
-	else: #(amount == 3):
-		remove_health = 2.5
+	remove_health = amount - 1
+	
 		
 func increase_health() -> void:
 	#print("increasing")
 	if (health_left >= 75):
-		remove_health = -1
-	elif (health_left >= 50):
 		remove_health = -2
+	elif (health_left >= 50):
+		remove_health = -4
 	else: # (health_left >= 25):
-		remove_health = -2.5
+		remove_health = -5
 	
 		
 func _process(_delta) -> void:
