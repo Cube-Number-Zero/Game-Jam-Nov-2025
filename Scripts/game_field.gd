@@ -71,7 +71,10 @@ func create_random_portals() -> void:
 		var board: Board = $Grid.get_children().pick_random()
 		var x: int = randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1)
 		var y: int = randi_range(0, Board.BOARD_DIMENSIONS_CELLS - 1)
-		if board.is_empty_at_cell(Vector2i(x, y)):
+		if x in [0, Board.BOARD_DIMENSIONS_CELLS - 1] and y in [0, Board.BOARD_DIMENSIONS_CELLS - 1]:
+			# In a corner
+			continue
+		elif board.is_empty_at_cell(Vector2i(x, y)):
 			coords1 = Vector3i(x, y, board.z_dimension)
 		else:
 			attempts_left -= 1

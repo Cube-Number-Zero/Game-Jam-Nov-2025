@@ -140,7 +140,6 @@ func delete_portal(cell: Vector2i) -> void:
 
 func remove_flower(cell: Vector2i) -> void:
 	var type: Flower.FlowerType = determine_flower_type(cell)
-	
 	var replace_atlasindex: int = 0
 	
 	if does_cell_have_connection(cell, type, Vector2i( 0,-1)): replace_atlasindex |= 1
