@@ -38,6 +38,7 @@ offset_left = 414.0
 offset_top = 7.0
 offset_right = 493.0
 offset_bottom = 643.0
+step = 0.0
 value = 75.0
 fill_mode = 3
 texture_under = ExtResource("2_rdv7x")
@@ -139,6 +140,7 @@ vertical_alignment = 1
 one_shot = true
 
 [node name="health_timer" type="Timer" parent="."]
+wait_time = 0.5
 autostart = true
 
 [connection signal="resized" from="." to="." method="_on_resized"]

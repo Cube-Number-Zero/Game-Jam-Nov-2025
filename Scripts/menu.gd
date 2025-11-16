@@ -68,7 +68,7 @@ func check_flowers() -> void:
 		amount += 1
 	if flower_3_regions > 1:
 		amount +=1
-	print(amount)
+	#print(amount)
 	if amount > 0:
 		decrease_health(amount)
 	else:
@@ -78,33 +78,33 @@ func check_flowers() -> void:
 		
 		
 func decrease_health(amount: int) -> void:
-	print("decreasing")
+	#print("decreasing")
 	if (amount == 1):
 		remove_health = 1
 	elif (amount == 2):
-		remove_health = 2
+		remove_health = 1.75
 	else: #(amount == 3):
-		remove_health = 5
+		remove_health = 2.5
 		
 func increase_health() -> void:
-	print("increasing")
+	#print("increasing")
 	if (health_left >= 75):
-		remove_health = -2
+		remove_health = -1
 	elif (health_left >= 50):
-		remove_health = -4
-	elif (health_left >= 25):
-		remove_health = -6
-	else:
-		remove_health = -8
+		remove_health = -2
+	else: # (health_left >= 25):
+		remove_health = -2.5
 	
 		
-func _process(delta) -> void:
+func _process(_delta) -> void:
 	score = get_node("background_base/score_text_label").score_value
 	flower_1_regions = GameField.disconnected_regions[Flower.FlowerType.FLOWER_COLOR_1]
 	flower_2_regions = GameField.disconnected_regions[Flower.FlowerType.FLOWER_COLOR_2]
 	flower_3_regions = GameField.disconnected_regions[Flower.FlowerType.FLOWER_COLOR_3]
-	health_left -= (remove_health * delta)/2
+	health_left -= (remove_health)/175
+	health_left = clampf(health_left,0.0,100.0)
 	health_bar.set_value(health_left)
+	#print(health_bar.get_value())
 	
 	if stopit == false:
 		if (time_left.get_value() <= 0):

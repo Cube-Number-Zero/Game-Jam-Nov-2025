@@ -29,9 +29,9 @@ func _on_quit() -> void:
 	
 func game_done(score: int) -> void:
 	get_tree().paused = true
-	if score <= 10:
+	if score <= 50:
 		image.set_texture(bad_image)
-	elif score <= 40:
+	elif score <= 100:
 		image.set_texture(mid_image)
 	else:
 		image.set_texture(good_image)

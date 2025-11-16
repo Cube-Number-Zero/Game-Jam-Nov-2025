@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://bfauf1gkapklw"]
+[gd_scene load_steps=8 format=3 uid="uid://bfauf1gkapklw"]
 
 [ext_resource type="Texture2D" uid="uid://b182da2dydbs6" path="res://Assets/button.png" id="1_klylv"]
 [ext_resource type="Script" uid="uid://doq7yk4qh8cfi" path="res://Scripts/title_screen.gd" id="1_p3fck"]
 [ext_resource type="Texture2D" uid="uid://bikw3hujc2vwn" path="res://Assets/title_screen.png" id="2_4gxqj"]
 [ext_resource type="Script" uid="uid://c5j7lsj8jsxsy" path="res://Scripts/NextSceneButton.gd" id="4_55kwv"]
 [ext_resource type="FontFile" uid="uid://c30rhp3jr7klg" path="res://Assets/Lilian.ttf" id="4_twnyg"]
+[ext_resource type="AudioStream" uid="uid://dkqdluglneale" path="res://Assets/Sound/Title Theme.ogg" id="6_6vd4x"]
+[ext_resource type="Script" uid="uid://brqri8plwenrq" path="res://Scripts/title_music_player.gd" id="7_n82rj"]
 
 [node name="TitleScreen" type="Node2D"]
 process_mode = 3
@@ -117,6 +119,11 @@ theme_override_font_sizes/normal_font_size = 75
 text = "Kruskal's Garden"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="title_music_player" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_6vd4x")
+parameters/looping = false
+script = ExtResource("7_n82rj")
 
 [connection signal="button_down" from="title_canvas/start_button" to="title_canvas/start_button" method="_on_button_down"]
 [connection signal="pressed" from="title_canvas/start_button" to="." method="_on_start"]
