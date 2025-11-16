@@ -8,7 +8,7 @@ var type: FlowerType
 
 var cell: Vector2i
 
-const FLOWER_REMOVAL_CHANCE: float = 0.4 ## The odds this flower will be removed when FlowerRemovalTimer expires, if possible
+const FLOWER_REMOVAL_CHANCE: float = 0.2 ## The odds this flower will be removed when FlowerRemovalTimer expires, if possible
 
 func check_for_flower_decay() -> void:
 	var connections: int = $"../..".count_flower_connections(cell)
