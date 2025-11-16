@@ -29,11 +29,11 @@ mouse_filter = 2
 autostart = true
 
 [node name="PortalSpawnTimer" type="Timer" parent="."]
-wait_time = 11.25
+wait_time = 15.0
 autostart = true
 
 [node name="FlowerSpawnTimer" type="Timer" parent="."]
-wait_time = 2.0
+wait_time = 8.0
 autostart = true
 
 [connection signal="resized" from="." to="." method="_on_resized"]

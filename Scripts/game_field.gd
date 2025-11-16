@@ -32,6 +32,12 @@ func _ready() -> void:
 		board.create_flower_at_random_location(type)
 		board.create_flower_at_random_location(type)
 
+func _physics_process(_delta: float) -> void:
+	if Input.is_action_just_pressed("toggle_erase"):
+		#Board.erase_mode = not Board.erase_mode
+		$"../HBoxContainer/GameplayMenu"._on_erase(!Board.erase_mode)
+
+
 func create_random_flower() -> void:
 	var type: Flower.FlowerType = [Flower.FlowerType.FLOWER_COLOR_1, Flower.FlowerType.FLOWER_COLOR_2, Flower.FlowerType.FLOWER_COLOR_3].pick_random()
 	var possible_boards: Array[Board] = []
@@ -116,6 +122,7 @@ func check_disconnected_regions(type: Flower.FlowerType) -> void:
 	var unreached_flowers: Array = flower_lists[type].duplicate()
 	
 	while len(unreached_flowers):
+		#print("TESTING!")
 		disconnected_regions[type] += 1
 		var connected: Array[Flower] = Board.get_flowers_connected_to_cell(
 			Vector3i(unreached_flowers[0].cell.x, unreached_flowers[0].cell.y, unreached_flowers[0].get_node(^"../..").z_dimension),
@@ -129,6 +136,7 @@ func check_all_disconnected_regions() -> void:
 	check_disconnected_regions(Flower.FlowerType.FLOWER_COLOR_1)
 	check_disconnected_regions(Flower.FlowerType.FLOWER_COLOR_2)
 	check_disconnected_regions(Flower.FlowerType.FLOWER_COLOR_3)
+	#print(disconnected_regions)
 
 
 func _on_check_islands_timer_timeout() -> void:
