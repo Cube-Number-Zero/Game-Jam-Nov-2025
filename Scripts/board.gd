@@ -145,6 +145,7 @@ func erase() -> void:
 				var layer: TileMapLayer = flowertype[type]
 				var atlascoords: Vector2i = layer.get_cell_atlas_coords(cell)
 				if atlascoords == EMPTY_ATLAS_COORDS: continue # Empty square!
+				if atlascoords == PORTAL_ATLAS_COORDS: continue # Portal!
 				atlascoords -= ATLAS_OFFSETS[type]
 				
 				try_to_erase_path(cell, Vector2i( 0,-1), type)
@@ -363,9 +364,9 @@ func draw_through_portal(portal: Portal, direction: Vector2i) -> void:
 				return # STOP INFINITE LOOP
 			else:
 				draw_through_portal(board2.get_portal_at_cell(portal2.cell + direction), direction)
-		FLOWER_ATLAS_COORDS:
-			#Don't need to do anything.
-			return
+		FLOWER_ATLAS_COORDS + ATLAS_OFFSETS[Flower.FlowerType.FLOWER_COLOR_1]: return #Don't need to do anything.
+		FLOWER_ATLAS_COORDS + ATLAS_OFFSETS[Flower.FlowerType.FLOWER_COLOR_2]: return #Don't need to do anything.
+		FLOWER_ATLAS_COORDS + ATLAS_OFFSETS[Flower.FlowerType.FLOWER_COLOR_3]: return #Don't need to do anything.
 		_:
 			var atlasindex: int = INVERT_ATLAS_INDEX[VECTOR_TO_ATLAS_INDEX[direction]]
 			atlasindex |= ATLAS_COORDS_TO_ATLAS_INDEX[atlascoords2 - ATLAS_OFFSETS[drawing_type]]

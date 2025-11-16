@@ -30,3 +30,5 @@ text = "A"
 horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true
+
+[node name="Timer" type="Timer" parent="."]

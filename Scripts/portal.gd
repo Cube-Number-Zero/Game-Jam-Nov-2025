@@ -11,6 +11,12 @@ func _ready() -> void:
 	all_portal_list.append(self)
 
 
+func _process(_delta: float) -> void:
+	#TESTING ONLY!
+	assert($"../../TileMapLayer1".get_cell_atlas_coords(cell) == Board.PORTAL_ATLAS_COORDS)
+	assert($"../../TileMapLayer2".get_cell_atlas_coords(cell) == Board.PORTAL_ATLAS_COORDS)
+	assert($"../../TileMapLayer3".get_cell_atlas_coords(cell) == Board.PORTAL_ATLAS_COORDS)
+
 
 static func link_portals(portal1: Portal, portal2: Portal) -> void:
 	portal1.linked_portal = portal2
