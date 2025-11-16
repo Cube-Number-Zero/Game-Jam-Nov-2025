@@ -25,4 +25,6 @@ tile_set = ExtResource("2_uh3b8")
 
 [node name="Portals" type="Node2D" parent="."]
 
+[node name="Obstacles" type="Node2D" parent="."]
+
 [connection signal="resized" from="." to="." method="_on_resized"]

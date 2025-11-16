@@ -3,6 +3,7 @@ class_name Board extends Control
 
 const PACKED_FLOWER: PackedScene = preload("res://Scenes/flower.tscn")
 const PACKED_PORTAL: PackedScene = preload("res://Scenes/portal.tscn")
+const PACKED_OBSTACLE: PackedScene = preload("res://Scenes/obstacle.tscn")
 
 const TILE_SIZE: int = 26 ## The height/width of tiles, in pixels
 static var board_dimensions_cells: int = 12 ## The width of the board, in cells
@@ -20,6 +21,7 @@ static var erase_mode: bool = false
 const EMPTY_ATLAS_COORDS := Vector2i(-1, -1)
 const FLOWER_ATLAS_COORDS := Vector2i(0, 0)
 const PORTAL_ATLAS_COORDS := Vector2i(4, 0)
+const OBSTACLE_ATLAS_COORDS := Vector2i(4, 1)
 
 const ATLAS_INDEX_TO_ATLAS_COORDS: Dictionary[int, Vector2i] = {
 	0x1: Vector2i(0, 3),
@@ -93,13 +95,17 @@ func _ready() -> void:
 			$BackgroundTiles.set_cell(Vector2i(x, y), 0, Vector2i(randi_range(0, 4), 13))
 
 
-func create_flower_at_random_location(type: Flower.FlowerType):
+func create_flower_at_random_location(type: Flower.FlowerType) -> void:
 	var x: int = randi_range(0, board_dimensions_cells - 1)
 	var y: int = randi_range(0, board_dimensions_cells - 1)
 	if is_empty_at_cell(Vector2i(x, y)):
 		create_flower(x, y, type)
 
-
+func create_obstacle_at_random_location() -> void:
+	var x: int = randi_range(0, board_dimensions_cells - 1)
+	var y: int = randi_range(0, board_dimensions_cells - 1)
+	if is_empty_at_cell(Vector2i(x, y)):
+		create_obstacle(x, y)
 
 func create_flower(x_cell: int, y_cell: int, flower_type: Flower.FlowerType) -> void:
 	var real_flower: Flower = PACKED_FLOWER.instantiate()
@@ -121,6 +127,16 @@ func create_portal(x_cell: int, y_cell: int) -> Portal:
 	real_portal.cell = Vector2i(x_cell, y_cell)
 	return real_portal
 
+func create_obstacle(x_cell: int, y_cell: int) -> void:
+	var real_obstacle: Obstacle = PACKED_OBSTACLE.instantiate()
+	$Obstacles.add_child(real_obstacle)
+	real_obstacle.position = $TileMapLayer1.map_to_local(Vector2i(x_cell, y_cell))
+	$TileMapLayer1.set_cell(Vector2i(x_cell, y_cell), 0, OBSTACLE_ATLAS_COORDS)
+	$TileMapLayer2.set_cell(Vector2i(x_cell, y_cell), 0, OBSTACLE_ATLAS_COORDS)
+	$TileMapLayer3.set_cell(Vector2i(x_cell, y_cell), 0, OBSTACLE_ATLAS_COORDS)
+	real_obstacle.cell = Vector2i(x_cell, y_cell)
+	
+
 func _physics_process(_delta: float) -> void:
 	if erase_mode:
 		erase()
@@ -134,6 +150,10 @@ func is_empty_at_cell(cell: Vector2i) -> bool:
 	return l1 and l2 and l3
 
 func delete_portal(cell: Vector2i) -> void:
+	for layer: TileMapLayer in flowertype.values():
+		layer.erase_cell(cell)
+
+func delete_obstacle(cell: Vector2i) -> void:
 	for layer: TileMapLayer in flowertype.values():
 		layer.erase_cell(cell)
 
@@ -196,6 +216,8 @@ func does_cell_have_connection(cell: Vector2i, type: Flower.FlowerType, directio
 	match atlascoords2:
 		EMPTY_ATLAS_COORDS:
 			return false
+		OBSTACLE_ATLAS_COORDS:
+			return false
 		FLOWER_ATLAS_COORDS:
 			return true # If I wanted to be more in-depth, I'd check if the flower
 						# is actually connecting through the portal or just next to it.
@@ -227,6 +249,7 @@ func erase() -> void:
 				var atlascoords: Vector2i = layer.get_cell_atlas_coords(cell)
 				if atlascoords == EMPTY_ATLAS_COORDS: continue # Empty square!
 				if atlascoords == PORTAL_ATLAS_COORDS: continue # Portal!
+				if atlascoords == OBSTACLE_ATLAS_COORDS: continue # Obstacle
 				atlascoords -= ATLAS_OFFSETS[type]
 				
 				try_to_erase_path(cell, Vector2i( 0,-1), type)
@@ -251,6 +274,7 @@ func try_to_erase_path(cell: Vector2i, offset: Vector2i, type: Flower.FlowerType
 	var atlascoords = layer.get_cell_atlas_coords(cell + offset)
 	if atlascoords == EMPTY_ATLAS_COORDS: return
 	if atlascoords == PORTAL_ATLAS_COORDS: return
+	if atlascoords == OBSTACLE_ATLAS_COORDS: return
 	atlascoords -= ATLAS_OFFSETS[type]
 	if not ATLAS_COORDS_TO_ATLAS_INDEX.has(atlascoords):
 		if atlascoords == FLOWER_ATLAS_COORDS:
@@ -284,6 +308,8 @@ func get_cells_connected_to_cell(cell: Vector2i) -> Array[Vector3i]:
 		var atlascoords: Vector2i = layer.get_cell_atlas_coords(cell)
 		if atlascoords == EMPTY_ATLAS_COORDS:
 			continue # Empty square!
+		if atlascoords == OBSTACLE_ATLAS_COORDS:
+			continue # Obstacle!
 		if atlascoords != PORTAL_ATLAS_COORDS:
 			atlascoords -= ATLAS_OFFSETS[type]
 		
@@ -446,6 +472,7 @@ func draw_through_portal(portal: Portal, direction: Vector2i) -> void:
 		FLOWER_ATLAS_COORDS + ATLAS_OFFSETS[Flower.FlowerType.FLOWER_COLOR_1]: return #Don't need to do anything.
 		FLOWER_ATLAS_COORDS + ATLAS_OFFSETS[Flower.FlowerType.FLOWER_COLOR_2]: return #Don't need to do anything.
 		FLOWER_ATLAS_COORDS + ATLAS_OFFSETS[Flower.FlowerType.FLOWER_COLOR_3]: return #Don't need to do anything.
+		OBSTACLE_ATLAS_COORDS: return
 		_:
 			var atlasindex: int = INVERT_ATLAS_INDEX[VECTOR_TO_ATLAS_INDEX[direction]]
 			atlasindex |= ATLAS_COORDS_TO_ATLAS_INDEX[atlascoords2 - ATLAS_OFFSETS[drawing_type]]
@@ -456,6 +483,8 @@ func draw_through_portal(portal: Portal, direction: Vector2i) -> void:
 func can_draw_at(cell: Vector2i) -> bool:
 	if cell.x < 0 or cell.y < 0 or cell.x >= board_dimensions_cells or cell.y >= board_dimensions_cells:
 		return false # out of bounds
+	
+	if $TileMapLayer1.get_cell_atlas_coords(cell) == OBSTACLE_ATLAS_COORDS: return false
 	
 	if $TileMapLayer1.get_cell_atlas_coords(cell) != PORTAL_ATLAS_COORDS:
 		if $TileMapLayer1.get_cell_atlas_coords(cell) != EMPTY_ATLAS_COORDS:
@@ -517,7 +546,7 @@ func check_through_portal_connection(portal: Portal, direction: Vector2i, type: 
 	
 	var atlascoords2: Vector2i = layer2.get_cell_atlas_coords(portal2.cell + direction)
 	
-	if atlascoords2 == EMPTY_ATLAS_COORDS:
+	if atlascoords2 == EMPTY_ATLAS_COORDS or atlascoords2 == OBSTACLE_ATLAS_COORDS:
 		return NULL_RETURN
 	elif atlascoords2 == PORTAL_ATLAS_COORDS:
 		return check_through_portal_connection(board2.get_portal_at_cell(portal2.cell + direction), direction, type)

@@ -3,7 +3,7 @@ class_name GameField extends Control
 
 const PACKED_BOARD: PackedScene = preload("res://Scenes/board.tscn")
 
-static var meta_grid_dimensions: Vector2i = Vector2i(3, 3) ## How many boards are in the game?
+static var meta_grid_dimensions: Vector2i = Vector2i(2, 2) ## How many boards are in the game?
 
 # i changed this one - i hope it dont fuck up
 static var disconnected_regions: Dictionary[Flower.FlowerType, int] = {
@@ -83,7 +83,13 @@ func create_random_portals() -> void:
 		var board: Board = $Grid.get_children().pick_random()
 		var x: int = randi_range(0, Board.board_dimensions_cells - 1)
 		var y: int = randi_range(0, Board.board_dimensions_cells - 1)
-		if board.is_empty_at_cell(Vector2i(x, y)):
+		if x in [0, Board.board_dimensions_cells - 1] and y in [0, Board.board_dimensions_cells - 1]:
+			# In a corner
+			continue
+		elif coords1 == Vector3i(x, y, board.z_dimension):
+			attempts_left -= 1
+			if not attempts_left: return # Board was too full. Fail.
+		elif board.is_empty_at_cell(Vector2i(x, y)):
 			coords2 = Vector3i(x, y, board.z_dimension)
 		else:
 			attempts_left -= 1
@@ -151,3 +157,7 @@ func _on_portal_spawn_timer_timeout() -> void:
 
 func _on_flower_spawn_timer_timeout() -> void:
 	create_random_flower()
+
+
+func _on_obstacle_spawn_timer_timeout() -> void:
+	$Grid.get_children().pick_random().create_obstacle_at_random_location()

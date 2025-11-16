@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://dlm7eoe171il"]
+
+[ext_resource type="Script" uid="uid://bxp08mqcsywha" path="res://Scripts/obstacle.gd" id="1_15o2q"]
+[ext_resource type="Texture2D" uid="uid://cxgg02y57xsvm" path="res://Assets/tileset.png" id="2_2p81s"]
+
+[node name="Obstacle" type="Node2D"]
+script = ExtResource("1_15o2q")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_2p81s")
+region_enabled = true
+region_rect = Rect2(0, 312, 26, 26)
+
+[node name="ObstacleRemovalTimer" type="Timer" parent="."]
+wait_time = 30.0
+autostart = true
+
+[connection signal="timeout" from="ObstacleRemovalTimer" to="." method="_on_obstacle_removal_timer_timeout"]

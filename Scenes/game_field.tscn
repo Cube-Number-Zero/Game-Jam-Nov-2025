@@ -36,7 +36,12 @@ autostart = true
 wait_time = 8.0
 autostart = true
 
+[node name="ObstacleSpawnTimer" type="Timer" parent="."]
+wait_time = 20.0
+autostart = true
+
 [connection signal="resized" from="." to="." method="_on_resized"]
 [connection signal="timeout" from="CheckIslandsTimer" to="." method="_on_check_islands_timer_timeout"]
 [connection signal="timeout" from="PortalSpawnTimer" to="." method="_on_portal_spawn_timer_timeout"]
 [connection signal="timeout" from="FlowerSpawnTimer" to="." method="_on_flower_spawn_timer_timeout"]
+[connection signal="timeout" from="ObstacleSpawnTimer" to="." method="_on_obstacle_spawn_timer_timeout"]
