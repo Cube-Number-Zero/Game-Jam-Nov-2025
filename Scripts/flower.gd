@@ -14,9 +14,11 @@ func check_for_flower_decay() -> void:
 	var connections: int = $"../..".count_flower_connections(cell)
 	if 0 < connections and connections <= 2: # Viable for check for flower decay
 		$"../..".remove_flower(cell)
+		queue_free()
+		$"../../../..".flower_lists[type].erase(self)
 
 
 func _on_flower_removal_timer_timeout() -> void:
-	return
 	if randf() <= FLOWER_REMOVAL_CHANCE:
-		check_for_flower_decay()
+		if len($"../../../..".flower_lists[type]) > 3: # Don't erase flowers when there are fewer than three of thi type
+			check_for_flower_decay()
