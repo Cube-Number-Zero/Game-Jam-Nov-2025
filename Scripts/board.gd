@@ -132,7 +132,62 @@ func is_empty_at_cell(cell: Vector2i) -> bool:
 	var l3: bool = ($TileMapLayer3.get_cell_atlas_coords(cell) == EMPTY_ATLAS_COORDS)
 	return l1 and l2 and l3
 
-#region black magic
+func delete_portal(cell: Vector2i) -> void:
+	for layer: TileMapLayer in flowertype.values():
+		layer.erase_cell(cell)
+
+#region dark magic
+
+func count_flower_connections(cell: Vector2i) -> int:
+	# Determine flower type
+	var type: Flower.FlowerType
+	for test_type: Flower.FlowerType in Flower.FLOWER_TYPES:
+		if flowertype[test_type].get_cell_atlas_coords(cell) == ATLAS_OFFSETS[test_type]:
+			type = test_type
+			break
+	
+	var count: int = 0
+	
+	if does_cell_have_connection(cell, type, Vector2i( 0,-1)): count += 1
+	if does_cell_have_connection(cell, type, Vector2i( 1, 0)): count += 1
+	if does_cell_have_connection(cell, type, Vector2i( 0, 1)): count += 1
+	if does_cell_have_connection(cell, type, Vector2i(-1, 0)): count += 1
+	
+	return count
+	
+
+func is_portal_connected(cell: Vector2i) -> bool:
+	assert($TileMapLayer1.get_cell_atlas_coords(cell) == PORTAL_ATLAS_COORDS)
+	for type: Flower.FlowerType in Flower.FLOWER_TYPES:
+		for direction: Vector2i in [Vector2i( 0,-1), Vector2i( 1, 0), Vector2i( 0, 1), Vector2i(-1, 0)]:
+			if does_cell_have_connection(cell, type, direction):
+				return true
+	return false # Found no connections
+
+func does_cell_have_connection(cell: Vector2i, type: Flower.FlowerType, direction: Vector2i) -> bool:
+	var cell2: Vector2i = cell + direction
+	var atlascoords2: Vector2i = flowertype[type].get_cell_atlas_coords(cell2)
+	match atlascoords2:
+		EMPTY_ATLAS_COORDS:
+			return false
+		FLOWER_ATLAS_COORDS:
+			return true # If I wanted to be more in-depth, I'd check if the flower
+						# is actually connecting through the portal or just next to it.
+		PORTAL_ATLAS_COORDS:
+			var portal2: Portal = get_portal_at_cell(cell2).linked_portal
+			return portal2.get_node(^"../..").does_cell_have_connection(portal2.cell, type, direction)
+		_:
+			# Branch
+			atlascoords2 -= ATLAS_OFFSETS[type]
+			if not atlascoords2 in ATLAS_COORDS_TO_ATLAS_INDEX.keys():
+				# Overpass!
+				return true
+			
+			var atlasindex2: int = ATLAS_COORDS_TO_ATLAS_INDEX[atlascoords2]
+			var testing_index: int = INVERT_ATLAS_INDEX[VECTOR_TO_ATLAS_INDEX[direction]]
+			return bool(atlasindex2 & testing_index)
+
+
 
 func erase() -> void:
 	if is_drawing:
@@ -141,7 +196,7 @@ func erase() -> void:
 			return
 		var cell: Vector2i = $TileMapLayer1.local_to_map(get_local_mouse_position() / $TileMapLayer1.scale)
 		if cell != drawing_cell:
-			for type: Flower.FlowerType in [Flower.FlowerType.FLOWER_COLOR_1, Flower.FlowerType.FLOWER_COLOR_2, Flower.FlowerType.FLOWER_COLOR_3]:
+			for type: Flower.FlowerType in Flower.FLOWER_TYPES:
 				var layer: TileMapLayer = flowertype[type]
 				var atlascoords: Vector2i = layer.get_cell_atlas_coords(cell)
 				if atlascoords == EMPTY_ATLAS_COORDS: continue # Empty square!
@@ -196,7 +251,7 @@ static func get_cells_connected_to_cell_3d(cell: Vector3i) -> Array[Vector3i]:
 
 func get_cells_connected_to_cell(cell: Vector2i) -> Array[Vector3i]:
 	var returns: Array[Vector3i] = []
-	for type: Flower.FlowerType in [Flower.FlowerType.FLOWER_COLOR_1, Flower.FlowerType.FLOWER_COLOR_2, Flower.FlowerType.FLOWER_COLOR_3]:
+	for type: Flower.FlowerType in Flower.FLOWER_TYPES:
 		var layer: TileMapLayer = flowertype[type]
 		
 		# Get atlas index
