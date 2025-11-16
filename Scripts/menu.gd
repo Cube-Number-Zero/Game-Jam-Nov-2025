@@ -83,11 +83,11 @@ func decrease_health(amount: int) -> void:
 func increase_health() -> void:
 	#print("increasing")
 	if (health_left >= 75):
-		remove_health = -3
+		remove_health = -6
 	elif (health_left >= 50):
-		remove_health = -4
+		remove_health = -8
 	else: # (health_left >= 25):
-		remove_health = -5
+		remove_health = -10
 	
 		
 func _process(_delta) -> void:
