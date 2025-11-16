@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://coqgfv4em5adt"]
+[gd_scene load_steps=9 format=3 uid="uid://coqgfv4em5adt"]
 
 [ext_resource type="PackedScene" uid="uid://dhh3575hx7s8k" path="res://Scenes/game_field.tscn" id="1_l756w"]
 [ext_resource type="PackedScene" uid="uid://cbyffljkxcmwn" path="res://Scenes/gameplay_menu.tscn" id="2_pu3va"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://6txbs7socqht" path="res://Scenes/game_over_screen.tscn" id="4_6j5ir"]
 [ext_resource type="PackedScene" uid="uid://bvo3o0bhgqwhm" path="res://Scenes/screen_wipe.tscn" id="5_mgc0q"]
 [ext_resource type="AudioStream" uid="uid://c0qugfagcetai" path="res://Assets/Sound/Main Theme.ogg" id="6_bb2iq"]
+[ext_resource type="AudioStream" uid="uid://crn5efjbsn5gy" path="res://Assets/Sound/click.mp3" id="8_6y7pd"]
 
 [node name="MainGame" type="HBoxContainer"]
 anchors_preset = 15
@@ -48,6 +49,12 @@ position = Vector2(637, 274)
 stream = ExtResource("6_bb2iq")
 autoplay = true
 playback_type = 1
+
+[node name="SFXAudioPlayer" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("8_6y7pd")
+
+[connection signal="finished" from="AudioStreamPlayer" to="GameOverScreen" method="_on_audio_finished"]
 
 [editable path="HBoxContainer/GameplayMenu"]
 [editable path="ScreenWipe"]

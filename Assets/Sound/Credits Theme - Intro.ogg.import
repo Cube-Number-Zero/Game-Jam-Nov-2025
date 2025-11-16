@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://b5olqmwgikly0"
+path="res://.godot/imported/Credits Theme - Intro.ogg-c81548eeca8f9350bb612f0404908844.oggvorbisstr"
+
+[deps]
+
+source_file="res://Assets/Sound/Credits Theme - Intro.ogg"
+dest_files=["res://.godot/imported/Credits Theme - Intro.ogg-c81548eeca8f9350bb612f0404908844.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

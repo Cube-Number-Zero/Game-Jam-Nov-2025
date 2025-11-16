@@ -1,6 +1,6 @@
 extends TextureRect
 
-var SceneToTransitionTo = ""
+#var SceneToTransitionTo = ""
 
 @onready var timer = $TransitionTimer
 @onready var animationPlayer = $AnimationPlayer
@@ -8,8 +8,7 @@ var SceneToTransitionTo = ""
 @export var transition_done: bool = false
 @export var game_restarting: bool = false
 
-func transition():#nextScene: String):
-	#SceneToTransitionTo = nextScene
+func transition():
 	transition_done = false
 	timer.start()
 	animationPlayer.play("Transition")

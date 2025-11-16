@@ -6,10 +6,16 @@ extends Node2D
 @onready var score_text = get_node("gameover_canvas/final_score_text")
 @onready var transition = get_node("../ScreenWipe/ScreenWipe")
 @onready var image = get_node("gameover_canvas/background")
+@onready var music_player = get_node("../AudioStreamPlayer")
+@onready var sfx_player = get_node("../SFXAudioPlayer")
 
 const bad_image = preload("res://Assets/KG_GameJam_GameOver.png")
 const mid_image = preload("res://Assets/KG_GameJam_mid.png")
 const good_image = preload("res://Assets/KG_GameJam_good.png")
+
+const gameover_theme_intro = preload("res://Assets/Sound/Credits Theme - Intro.ogg")
+const gameover_theme = preload("res://Assets/Sound/Credits Theme - Loop.ogg")
+
 
 var restarting: bool = false
 var restarted: bool = false
@@ -18,17 +24,20 @@ func _ready() -> void:
 	gameover_base.set_visible(false)
 
 func _on_restart() -> void:
+	sfx_player.play()
 	restarting = true
 	transition.game_restarting = true
 	transition.transition()
-	#get_node("../TitleScreen/title_canvas").set_visible(true)
-	#get_tree().reload_current_scene()
 
 func _on_quit() -> void:
+	sfx_player.play()
 	get_tree().quit()
 	
 func game_done(score: int) -> void:
 	get_tree().paused = true
+	music_player.stop()
+	music_player.set_stream(gameover_theme_intro)
+	music_player.play()
 	if score <= 150:
 		image.set_texture(bad_image)
 	elif score <= 300:
@@ -64,3 +73,10 @@ func _process(_delta) ->void:
 		pass
 		
 	
+
+func _on_audio_finished() -> void:
+	print("finished - outsidr loop")
+	if (music_player.get_stream() == gameover_theme_intro):
+		print("inside loop")
+		music_player.set_stream(gameover_theme)
+		music_player.play()

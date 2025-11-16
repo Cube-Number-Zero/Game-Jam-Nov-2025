@@ -4,6 +4,9 @@ extends TextureButton
 @onready var timerTime = timer.wait_time
 var ogScale = scale
 
+func _ready() -> void:
+	set_focus_mode(FOCUS_NONE)
+
 func _process(_delta: float) -> void:
 	var started = timer.time_left < timerTime and timer.time_left != 0
 	

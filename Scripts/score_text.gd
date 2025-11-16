@@ -6,7 +6,6 @@ extends RichTextLabel
 
 func _on_timer_timeout() -> void:
 	score_value += 10
-	#get_node("../../../gameplay_menu").check_flowers()
 
 func _process(_delta):
 	var text_str
