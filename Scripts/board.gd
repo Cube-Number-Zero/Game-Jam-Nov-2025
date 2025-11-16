@@ -127,9 +127,9 @@ func _physics_process(_delta: float) -> void:
 		draw()
 
 func is_empty_at_cell(cell: Vector2i) -> bool:
-	var l1: bool = (EMPTY_ATLAS_COORDS == $TileMapLayer1.get_cell_atlas_coords(cell))
-	var l2: bool = (EMPTY_ATLAS_COORDS == $TileMapLayer1.get_cell_atlas_coords(cell))
-	var l3: bool = (EMPTY_ATLAS_COORDS == $TileMapLayer1.get_cell_atlas_coords(cell))
+	var l1: bool = ($TileMapLayer1.get_cell_atlas_coords(cell) == EMPTY_ATLAS_COORDS)
+	var l2: bool = ($TileMapLayer2.get_cell_atlas_coords(cell) == EMPTY_ATLAS_COORDS)
+	var l3: bool = ($TileMapLayer3.get_cell_atlas_coords(cell) == EMPTY_ATLAS_COORDS)
 	return l1 and l2 and l3
 
 #region black magic

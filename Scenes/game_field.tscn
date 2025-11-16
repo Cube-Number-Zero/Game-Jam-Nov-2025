@@ -33,7 +33,9 @@ wait_time = 15.0
 autostart = true
 
 [node name="FlowerSpawnTimer" type="Timer" parent="."]
-wait_time = 20.0
+
+wait_time = 8.0
+
 autostart = true
 
 [connection signal="resized" from="." to="." method="_on_resized"]
