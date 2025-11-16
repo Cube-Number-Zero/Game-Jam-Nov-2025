@@ -177,8 +177,14 @@ func count_flower_connections(cell: Vector2i) -> int:
 
 func is_portal_connected(cell: Vector2i) -> bool:
 	assert($TileMapLayer1.get_cell_atlas_coords(cell) == PORTAL_ATLAS_COORDS)
+	var portal1: Portal = get_portal_at_cell(cell)
 	for type: Flower.FlowerType in Flower.FLOWER_TYPES:
 		for direction: Vector2i in [Vector2i( 0,-1), Vector2i( 1, 0), Vector2i( 0, 1), Vector2i(-1, 0)]:
+			if self == portal1.linked_portal.get_node(^"../.."):
+				# Linked portal is on the same board.
+				if portal1.linked_portal.cell == cell + direction:
+					# Portal is next to its linked portal! Don't test does_cell_have_connection to avoid infinite loop!
+					continue
 			if does_cell_have_connection(cell, type, direction):
 				return true
 	return false # Found no connections
