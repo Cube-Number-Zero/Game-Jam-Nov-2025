@@ -169,13 +169,11 @@ func try_to_erase_path(cell: Vector2i, offset: Vector2i, type: Flower.FlowerType
 	var layer: TileMapLayer = flowertype[type]
 	var atlascoords = layer.get_cell_atlas_coords(cell + offset)
 	if atlascoords == EMPTY_ATLAS_COORDS: return
+	if atlascoords == PORTAL_ATLAS_COORDS: return
 	atlascoords -= ATLAS_OFFSETS[type]
 	if not ATLAS_COORDS_TO_ATLAS_INDEX.has(atlascoords):
 		if atlascoords == FLOWER_ATLAS_COORDS:
 			# Is a flower!
-			pass
-		elif atlascoords == PORTAL_ATLAS_COORDS:
-			# Is a portal!
 			pass
 		else:
 			# Is an overpass! Erase it.
