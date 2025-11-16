@@ -18,7 +18,7 @@ var flower_lists: Dictionary[Flower.FlowerType, Array] = {
 	Flower.FlowerType.FLOWER_COLOR_3: []
 }
 
-func _ready() -> void:
+func now_ready() -> void:
 	$Grid.columns = meta_grid_dimensions.x
 	
 	# Create boards

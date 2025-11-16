@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bfauf1gkapklw"]
+[gd_scene load_steps=15 format=3 uid="uid://bfauf1gkapklw"]
 
 [ext_resource type="Texture2D" uid="uid://b182da2dydbs6" path="res://Assets/button.png" id="1_klylv"]
 [ext_resource type="Script" uid="uid://doq7yk4qh8cfi" path="res://Scripts/title_screen.gd" id="1_p3fck"]
@@ -7,6 +7,32 @@
 [ext_resource type="FontFile" uid="uid://c30rhp3jr7klg" path="res://Assets/Lilian.ttf" id="4_twnyg"]
 [ext_resource type="AudioStream" uid="uid://dkqdluglneale" path="res://Assets/Sound/Title Theme.ogg" id="6_6vd4x"]
 [ext_resource type="Script" uid="uid://brqri8plwenrq" path="res://Scripts/title_music_player.gd" id="7_n82rj"]
+[ext_resource type="Texture2D" uid="uid://448tvveb2ihr" path="res://Assets/slider.png" id="8_sqelc"]
+[ext_resource type="Texture2D" uid="uid://cogwyvoiabc2m" path="res://Assets/textureBarProgress_h_square.PNG" id="9_w5sh6"]
+[ext_resource type="Texture2D" uid="uid://df7sgg03v1aoj" path="res://Assets/textureBarProgress_h.png" id="10_o1e67"]
+[ext_resource type="Texture2D" uid="uid://dis28aeg2uugb" path="res://Assets/textureBarBottom_h.png" id="11_ycay6"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_bsy20"]
+color = Color(0, 0, 0, 0)
+thickness = 8
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_07cxn"]
+texture = ExtResource("9_w5sh6")
+texture_margin_left = 5.0
+texture_margin_right = 5.0
+expand_margin_top = 5.0
+expand_margin_bottom = 5.0
+axis_stretch_horizontal = 1
+region_rect = Rect2(103.82, 0, 359.883, 79)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_x2pfe"]
+texture = ExtResource("10_o1e67")
+texture_margin_left = 5.0
+texture_margin_right = 5.0
+expand_margin_top = 5.0
+expand_margin_bottom = 5.0
+axis_stretch_horizontal = 1
+region_rect = Rect2(75.0257, 0, 440.496, 79)
 
 [node name="TitleScreen" type="Node2D"]
 process_mode = 3
@@ -120,12 +146,232 @@ text = "Kruskal's Garden"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="options_button" type="TextureButton" parent="title_canvas"]
+top_level = true
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -482.0
+offset_top = -84.0
+offset_right = -282.0
+offset_bottom = -4.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(0.8, 0.8)
+pivot_offset = Vector2(100, 40)
+texture_normal = ExtResource("1_klylv")
+script = ExtResource("4_55kwv")
+metadata/_edit_use_anchors_ = true
+
+[node name="options_Text" type="RichTextLabel" parent="title_canvas/options_button"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 80.0
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.952941, 0.694118, 0.25098, 1)
+theme_override_fonts/normal_font = ExtResource("4_twnyg")
+theme_override_font_sizes/normal_font_size = 45
+text = "Options"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TransitionTimer" type="Timer" parent="title_canvas/options_button"]
+one_shot = true
+
 [node name="title_music_player" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_6vd4x")
 parameters/looping = false
 script = ExtResource("7_n82rj")
 
+[node name="options_canvas" type="CanvasLayer" parent="."]
+
+[node name="background" type="TextureRect" parent="options_canvas"]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -652.0
+offset_top = 16.0
+offset_right = -452.0
+offset_bottom = 96.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(2.7, 2.7)
+texture = ExtResource("1_klylv")
+stretch_mode = 5
+
+[node name="large_grid_slider" type="HSlider" parent="options_canvas/background"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -175.0
+offset_top = -23.0
+offset_right = 125.0
+offset_bottom = 25.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+theme_override_icons/grabber = ExtResource("8_sqelc")
+theme_override_icons/grabber_highlight = ExtResource("8_sqelc")
+theme_override_styles/slider = SubResource("StyleBoxLine_bsy20")
+theme_override_styles/grabber_area = SubResource("StyleBoxTexture_07cxn")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxTexture_x2pfe")
+min_value = 1.0
+max_value = 3.0
+value = 2.0
+rounded = true
+ticks_on_borders = true
+
+[node name="sliber_bg_bottom" type="TextureRect" parent="options_canvas/background/large_grid_slider"]
+show_behind_parent = true
+layout_mode = 0
+offset_left = -1.0
+offset_top = 5.0
+offset_right = 635.0
+offset_bottom = 84.0
+scale = Vector2(0.48, 0.48)
+texture = ExtResource("11_ycay6")
+
+[node name="slider_bg_top" type="TextureRect" parent="options_canvas/background/large_grid_slider"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 5.0
+offset_right = 23.0
+offset_bottom = 83.0
+scale = Vector2(0.48, 0.48)
+texture = ExtResource("11_ycay6")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="slider_bg_top_end" type="TextureRect" parent="options_canvas/background/large_grid_slider"]
+layout_mode = 0
+offset_left = 289.0
+offset_top = 5.0
+offset_right = 321.0
+offset_bottom = 83.0
+scale = Vector2(0.48, 0.48)
+texture = ExtResource("11_ycay6")
+expand_mode = 1
+stretch_mode = 1
+flip_h = true
+
+[node name="grabber_area_end" type="TextureRect" parent="options_canvas/background/large_grid_slider"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 15.0
+offset_right = 26.0
+offset_bottom = 75.0
+scale = Vector2(0.23, 0.23)
+texture = ExtResource("10_o1e67")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="small_grid_slider" type="HSlider" parent="options_canvas/background"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -175.0
+offset_top = 10.0
+offset_right = 125.0
+offset_bottom = 58.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+theme_override_icons/grabber = ExtResource("8_sqelc")
+theme_override_icons/grabber_highlight = ExtResource("8_sqelc")
+theme_override_styles/slider = SubResource("StyleBoxLine_bsy20")
+theme_override_styles/grabber_area = SubResource("StyleBoxTexture_07cxn")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxTexture_x2pfe")
+min_value = 3.0
+max_value = 16.0
+value = 12.0
+rounded = true
+
+[node name="sliber_bg_bottom" type="TextureRect" parent="options_canvas/background/small_grid_slider"]
+show_behind_parent = true
+layout_mode = 0
+offset_left = -1.0
+offset_top = 5.0
+offset_right = 635.0
+offset_bottom = 84.0
+scale = Vector2(0.48, 0.48)
+texture = ExtResource("11_ycay6")
+
+[node name="slider_bg_top" type="TextureRect" parent="options_canvas/background/small_grid_slider"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 5.0
+offset_right = 23.0
+offset_bottom = 83.0
+scale = Vector2(0.48, 0.48)
+texture = ExtResource("11_ycay6")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="slider_bg_top_end" type="TextureRect" parent="options_canvas/background/small_grid_slider"]
+layout_mode = 0
+offset_left = 289.0
+offset_top = 5.0
+offset_right = 321.0
+offset_bottom = 83.0
+scale = Vector2(0.48, 0.48)
+texture = ExtResource("11_ycay6")
+expand_mode = 1
+stretch_mode = 1
+flip_h = true
+
+[node name="grabber_area_end" type="TextureRect" parent="options_canvas/background/small_grid_slider"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 15.0
+offset_right = 26.0
+offset_bottom = 75.0
+scale = Vector2(0.23, 0.23)
+texture = ExtResource("10_o1e67")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="big_grid_text" type="RichTextLabel" parent="options_canvas"]
+offset_left = 520.0
+offset_top = 362.0
+offset_right = 1020.0
+offset_bottom = 402.0
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.952941, 0.694118, 0.25098, 1)
+theme_override_fonts/normal_font = ExtResource("4_twnyg")
+theme_override_font_sizes/normal_font_size = 30
+text = "Large Grid Size: 2 x 2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="small_grid_text" type="RichTextLabel" parent="options_canvas"]
+offset_left = 520.0
+offset_top = 450.0
+offset_right = 1020.0
+offset_bottom = 490.0
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.952941, 0.694118, 0.25098, 1)
+theme_override_fonts/normal_font = ExtResource("4_twnyg")
+theme_override_font_sizes/normal_font_size = 30
+text = "Small Grid Size: 12 x 12"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [connection signal="button_down" from="title_canvas/start_button" to="title_canvas/start_button" method="_on_button_down"]
 [connection signal="pressed" from="title_canvas/start_button" to="." method="_on_start"]
+[connection signal="pressed" from="title_canvas/start_button" to="." method="_check_grids"]
 [connection signal="button_down" from="title_canvas/quit_button" to="title_canvas/quit_button" method="_on_button_down"]
 [connection signal="pressed" from="title_canvas/quit_button" to="." method="_on_quit"]
+[connection signal="button_down" from="title_canvas/options_button" to="title_canvas/options_button" method="_on_button_down"]
+[connection signal="pressed" from="title_canvas/options_button" to="." method="_on_options"]
+[connection signal="drag_ended" from="options_canvas/background/large_grid_slider" to="." method="_on_large_grid_change"]
+[connection signal="drag_ended" from="options_canvas/background/small_grid_slider" to="." method="_on_small_grid_change"]
