@@ -5,6 +5,11 @@ extends Node2D
 @onready var gameover_base = get_node("gameover_canvas")
 @onready var score_text = get_node("gameover_canvas/final_score_text")
 @onready var transition = get_node("../ScreenWipe/ScreenWipe")
+@onready var image = get_node("gameover_canvas/background")
+
+const bad_image = preload("res://Assets/KG_GameJam_GameOver.png")
+const mid_image = preload("res://Assets/KG_GameJam_mid.png")
+const good_image = preload("res://Assets/KG_GameJam_good.png")
 
 var restarting: bool = false
 var restarted: bool = false
@@ -24,6 +29,13 @@ func _on_quit() -> void:
 	
 func game_done(score: int) -> void:
 	get_tree().paused = true
+	if score <= 10:
+		image.set_texture(bad_image)
+	elif score <= 40:
+		image.set_texture(mid_image)
+	else:
+		image.set_texture(good_image)
+		
 	gameover_base.set_visible(true)
 	var text_str
 	text_str = "Your Final Score Is: %d" % score

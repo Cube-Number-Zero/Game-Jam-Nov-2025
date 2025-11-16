@@ -138,6 +138,9 @@ vertical_alignment = 1
 [node name="TransitionTimer" type="Timer" parent="background_base/pause_button"]
 one_shot = true
 
+[node name="health_timer" type="Timer" parent="."]
+autostart = true
+
 [connection signal="resized" from="." to="." method="_on_resized"]
 [connection signal="timeout" from="background_base/score_text_label/timer" to="background_base/score_text_label" method="_on_timer_timeout"]
 [connection signal="button_down" from="background_base/erase_button" to="background_base/erase_button" method="_on_button_down"]
@@ -145,3 +148,4 @@ one_shot = true
 [connection signal="button_down" from="background_base/pause_button" to="background_base/pause_button" method="_on_button_down"]
 [connection signal="pressed" from="background_base/pause_button" to="." method="_on_pause"]
 [connection signal="toggled" from="background_base/pause_button" to="." method="_on_pause"]
+[connection signal="timeout" from="health_timer" to="." method="check_flowers"]

@@ -198,7 +198,7 @@ static func get_cells_connected_to_cell_3d(cell: Vector3i) -> Array[Vector3i]:
 func get_cells_connected_to_cell(cell: Vector2i) -> Array[Vector3i]:
 	var returns: Array[Vector3i] = []
 	for type: Flower.FlowerType in [Flower.FlowerType.FLOWER_COLOR_1, Flower.FlowerType.FLOWER_COLOR_2, Flower.FlowerType.FLOWER_COLOR_3]:
-		var layer: TileMapLayer = flowertype[drawing_type]
+		var layer: TileMapLayer = flowertype[type]
 		
 		# Get atlas index
 		var atlascoords: Vector2i = layer.get_cell_atlas_coords(cell)

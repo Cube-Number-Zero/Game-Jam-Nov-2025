@@ -5,7 +5,8 @@ const PACKED_BOARD: PackedScene = preload("res://Scenes/board.tscn")
 
 static var meta_grid_dimensions: Vector2i = Vector2i(2, 2) ## How many boards are in the game?
 
-var disconnected_regions: Dictionary[Flower.FlowerType, int] = {
+# i changed this one - i hope it dont fuck up
+static var disconnected_regions: Dictionary[Flower.FlowerType, int] = {
 	Flower.FlowerType.FLOWER_COLOR_1: 0,
 	Flower.FlowerType.FLOWER_COLOR_2: 0,
 	Flower.FlowerType.FLOWER_COLOR_3: 0

@@ -11,7 +11,6 @@ script = ExtResource("1_jb6in")
 
 [node name="gameover_canvas" type="CanvasLayer" parent="."]
 process_mode = 3
-visible = false
 
 [node name="background" type="TextureRect" parent="gameover_canvas"]
 anchors_preset = 15
@@ -94,10 +93,10 @@ vertical_alignment = 1
 one_shot = true
 
 [node name="gameover_text" type="RichTextLabel" parent="gameover_canvas"]
-offset_left = 308.0
-offset_top = 38.0
-offset_right = 1108.0
-offset_bottom = 228.0
+offset_left = 320.0
+offset_top = 26.0
+offset_right = 1120.0
+offset_bottom = 216.0
 theme_override_colors/default_color = Color(0.952941, 0.945098, 0.901961, 1)
 theme_override_fonts/normal_font = ExtResource("3_y8man")
 theme_override_font_sizes/normal_font_size = 130
@@ -106,10 +105,10 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="final_score_text" type="RichTextLabel" parent="gameover_canvas"]
-offset_left = 308.0
-offset_top = 182.0
-offset_right = 1108.0
-offset_bottom = 262.0
+offset_left = 320.0
+offset_top = 170.0
+offset_right = 1120.0
+offset_bottom = 250.0
 theme_override_colors/default_color = Color(0.729412, 0.713726, 0.678431, 1)
 theme_override_fonts/normal_font = ExtResource("3_y8man")
 theme_override_font_sizes/normal_font_size = 40

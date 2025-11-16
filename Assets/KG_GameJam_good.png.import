@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c8n0blxlgg68x"
-path="res://.godot/imported/Backgrd.png-277ca6572eded5c359e43c9cda36d005.ctex"
+uid="uid://cs4s7c6vi72f6"
+path="res://.godot/imported/KG_GameJam_good.png-8efb5bcce895fbd1671fdb90146d70d5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Backgrd.png"
-dest_files=["res://.godot/imported/Backgrd.png-277ca6572eded5c359e43c9cda36d005.ctex"]
+source_file="res://Assets/KG_GameJam_good.png"
+dest_files=["res://.godot/imported/KG_GameJam_good.png-8efb5bcce895fbd1671fdb90146d70d5.ctex"]
 
 [params]
 

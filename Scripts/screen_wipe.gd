@@ -40,3 +40,8 @@ func static_restart() -> void:
 	Board.boards = []
 	Board.erase_mode = false
 	Portal.all_portal_list = []
+	GameField.disconnected_regions = {
+	Flower.FlowerType.FLOWER_COLOR_1: 0,
+	Flower.FlowerType.FLOWER_COLOR_2: 0,
+	Flower.FlowerType.FLOWER_COLOR_3: 0
+	}
