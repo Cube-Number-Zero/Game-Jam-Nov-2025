@@ -28,7 +28,7 @@ mouse_filter = 1
 mouse_default_cursor_shape = 6
 
 [node name="FlowerRemovalTimer" type="Timer" parent="."]
-wait_time = 24.0
+wait_time = 60.0
 autostart = true
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]

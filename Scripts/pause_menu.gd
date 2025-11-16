@@ -14,12 +14,12 @@ const mute_icon = preload("res://Assets/SoundIconDisabled.png")
 var restarting: bool = false
 var restarted: bool = false
 var muted: bool = false
-var cur_volume: float = 30.0
+var cur_volume: float = 100.0
 
 func _ready() -> void:
 	volume_slider.set_value(cur_volume)
-	audio_player.set_volume_linear(volume_slider.get_value()/2)
-	sfx_player.set_volume_linear(volume_slider.get_value()/2)
+	audio_player.set_volume_linear(volume_slider.get_value()/100.0)
+	sfx_player.set_volume_linear(volume_slider.get_value()/100.0)
 	pass
 	
 func _on_mute() -> void:
@@ -36,8 +36,8 @@ func _on_mute() -> void:
 		volume_slider.set_value(cur_volume)
 			
 		volume_button.set_texture_normal(volume_icon)
-	audio_player.set_volume_linear(volume_slider.get_value()/2)
-	sfx_player.set_volume_linear(volume_slider.get_value()/2)
+	audio_player.set_volume_linear(volume_slider.get_value()/100.0)
+	sfx_player.set_volume_linear(volume_slider.get_value()/100.0)
 
 func _on_volume_change(_value_changed: bool) -> void:
 	if (volume_slider.get_value() == 0):
@@ -45,8 +45,8 @@ func _on_volume_change(_value_changed: bool) -> void:
 	elif (muted == true):
 		muted = false
 		volume_button.set_texture_normal(volume_icon)
-	audio_player.set_volume_linear(volume_slider.get_value()/2)
-	sfx_player.set_volume_linear(volume_slider.get_value()/2)
+	audio_player.set_volume_linear(volume_slider.get_value()/100.0)
+	sfx_player.set_volume_linear(volume_slider.get_value()/100.0)
 		
 func _on_restart() -> void:
 	sfx_player.play()
