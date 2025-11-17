@@ -491,7 +491,7 @@ func can_draw_at(cell: Vector2i) -> bool:
 			if drawing_type != Flower.FlowerType.FLOWER_COLOR_1 or not $TileMapLayer1.get_cell_atlas_coords(cell) in [Vector2i(0, 0), Vector2i(1, 0), Vector2i(3, 0), Vector2i(0, 1), Vector2i(0, 3)]:
 				return false # already something here!
 		if $TileMapLayer2.get_cell_atlas_coords(cell) != EMPTY_ATLAS_COORDS:
-			if drawing_type != Flower.FlowerType.FLOWER_COLOR_2 or not $TileMapLayer2.get_cell_atlas_coords(cell) in [Vector2i(0, 4), Vector2i(1, 4), Vector2i(3, 4), Vector2i(0, 5), Vector2i(0, 8)]:
+			if drawing_type != Flower.FlowerType.FLOWER_COLOR_2 or not $TileMapLayer2.get_cell_atlas_coords(cell) in [Vector2i(0, 4), Vector2i(1, 4), Vector2i(3, 4), Vector2i(0, 5), Vector2i(0, 7)]:
 				return false # already something here!
 		if $TileMapLayer3.get_cell_atlas_coords(cell) != EMPTY_ATLAS_COORDS:
 			if drawing_type != Flower.FlowerType.FLOWER_COLOR_3 or not $TileMapLayer3.get_cell_atlas_coords(cell) in [Vector2i(0, 8), Vector2i(1, 8), Vector2i(3, 8), Vector2i(0, 9), Vector2i(0,11)]:
