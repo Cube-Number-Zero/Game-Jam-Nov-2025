@@ -365,20 +365,24 @@ func try_to_erase_path(cell: Vector2i, offset: Vector2i, type: Flower.FlowerType
 		return
 	atlascoords -= ATLAS_OFFSETS[type]
 	if not ATLAS_COORDS_TO_ATLAS_INDEX.has(atlascoords):
-		#TODO FIX
 		if atlascoords == FLOWER_ATLAS_COORDS: # Is a flower!
 			return
 		else: # Is an overpass! Erase it.
+			assert(atlascoords in OVERPASS_ATLAS_CELLS)
 			var type_to_keep: Flower.FlowerType
-			LAYER_FROM_TYPE[type].erase_cell(cell + offset)
+			var type_to_erase: Flower.FlowerType
 			
+			#assert(ATLAS_COORDS_TO_DIRECTION[LAYER_FROM_TYPE[type].get_cell_atlas_coords(cell + offset)] == VECTOR_TO_DIRECTION[offset])
 			for test_type: Flower.FlowerType in Flower.FLOWER_TYPES:
-				if LAYER_FROM_TYPE[test_type].get_cell_atlas_coords(cell + offset) != EMPTY_ATLAS_COORDS:
-					type_to_keep = test_type
-					break
+				var test_atlascoords: Vector2i = LAYER_FROM_TYPE[test_type].get_cell_atlas_coords(cell + offset)
+				if test_atlascoords != EMPTY_ATLAS_COORDS:
+					if ATLAS_COORDS_TO_DIRECTION[test_atlascoords] == VECTOR_TO_DIRECTION[offset]:
+						type_to_erase = test_type
+					else:
+						type_to_keep = test_type
+			LAYER_FROM_TYPE[type_to_erase].erase_cell(cell + offset)
 			
 			var other_atlascoords: Vector2i = LAYER_FROM_TYPE[type_to_keep].get_cell_atlas_coords(cell + offset)
-
 			# Convert the other part of the overpass to a normal straight piece
 			match ATLAS_COORDS_TO_DIRECTION[other_atlascoords]:
 				Dir.HORIZONTAL:
@@ -386,8 +390,7 @@ func try_to_erase_path(cell: Vector2i, offset: Vector2i, type: Flower.FlowerType
 				Dir.VERTICAL:
 					LAYER_FROM_TYPE[type_to_keep].set_cell(cell + offset, 0, Vector2i(0, 2) + ATLAS_OFFSETS[type_to_keep])
 			
-			#try_to_erase_path(cell + offset * 2, -offset, type)
-			try_to_erase_path(cell + offset, offset, type)
+			try_to_erase_path(cell + offset, offset, type_to_erase)
 			
 			return
 	var atlasindex: int = ATLAS_COORDS_TO_ATLAS_INDEX[atlascoords]
@@ -606,6 +609,8 @@ func check_through_portal_connection(portal: Portal, direction: Vector2i, type: 
 
 func can_draw_through_portal(cell: Vector2i, direction: Vector2i) -> bool:
 	var portal1: Portal = get_portal_at_cell(cell)
+	if portal1.is_queued_for_deletion():
+		return false
 	var portal2: Portal = portal1.linked_portal
 	var cell2: Vector2i = portal2.cell + direction;
 	var other_board: Board = portal2.get_node(^"../..")

@@ -67,7 +67,7 @@ func create_random_flower() -> void:
 func create_random_portals() -> void:
 	
 	# Find locations
-	var attempts_left: int = 24
+	var attempts_left: int = 32
 	var coords1 := Vector3i(-1, -1, -1)
 	var coords2 := Vector3i(-1, -1, -1)
 	var force1: bool = false ## Whether or not we'll force place the first portal
@@ -90,7 +90,7 @@ func create_random_portals() -> void:
 					force1 = true
 				elif not attempts_left:
 					return # Couldn't force a portal either. Give up.
-	attempts_left = 24
+	attempts_left = 32
 	var board2: Board = $Grid.get_children().pick_random()
 	while coords2 == Vector3i(-1, -1, -1):
 		var x: int = randi_range(0, Board.board_dimensions_cells - 1)
