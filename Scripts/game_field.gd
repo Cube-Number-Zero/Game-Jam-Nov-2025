@@ -32,6 +32,8 @@ func now_ready() -> void:
 		var board: Board = $Grid.get_children().pick_random()
 		board.create_flower_at_random_location(type)
 		board.create_flower_at_random_location(type)
+		
+	call_deferred(&"check_all_disconnected_regions")
 
 func _physics_process(_delta: float) -> void:
 	if Input.is_action_just_pressed("toggle_erase"):
@@ -65,36 +67,55 @@ func create_random_flower() -> void:
 func create_random_portals() -> void:
 	
 	# Find locations
-	var attempts_left: int = 16
+	var attempts_left: int = 24
 	var coords1 := Vector3i(-1, -1, -1)
 	var coords2 := Vector3i(-1, -1, -1)
+	var force1: bool = false ## Whether or not we'll force place the first portal
+	var force2: bool = false ## Whether or not we'll force place the second portal
+	var board1: Board = $Grid.get_children().pick_random()
 	while coords1 == Vector3i(-1, -1, -1):
-		var board: Board = $Grid.get_children().pick_random()
 		var x: int = randi_range(0, Board.board_dimensions_cells - 1)
 		var y: int = randi_range(0, Board.board_dimensions_cells - 1)
 		if x in [0, Board.board_dimensions_cells - 1] and y in [0, Board.board_dimensions_cells - 1]:
 			# In a corner
 			continue
-		elif board.is_empty_at_cell(Vector2i(x, y)):
-			coords1 = Vector3i(x, y, board.z_dimension)
+		elif board1.is_empty_at_cell(Vector2i(x, y)):
+			coords1 = Vector3i(x, y, board1.z_dimension)
 		else:
 			attempts_left -= 1
-			if not attempts_left: return # Board was too full. Fail.
+			if attempts_left < 8: 
+				# Board was too full. Try to force a portal
+				if board1.can_force_clear(Vector2i(x, y)):
+					coords1 = Vector3i(x, y, board1.z_dimension)
+					force1 = true
+				elif not attempts_left:
+					return # Couldn't force a portal either. Give up.
+	attempts_left = 24
+	var board2: Board = $Grid.get_children().pick_random()
 	while coords2 == Vector3i(-1, -1, -1):
-		var board: Board = $Grid.get_children().pick_random()
 		var x: int = randi_range(0, Board.board_dimensions_cells - 1)
 		var y: int = randi_range(0, Board.board_dimensions_cells - 1)
 		if x in [0, Board.board_dimensions_cells - 1] and y in [0, Board.board_dimensions_cells - 1]:
 			# In a corner
 			continue
-		elif coords1 == Vector3i(x, y, board.z_dimension):
-			attempts_left -= 1
-			if not attempts_left: return # Board was too full. Fail.
-		elif board.is_empty_at_cell(Vector2i(x, y)):
-			coords2 = Vector3i(x, y, board.z_dimension)
+		elif coords1 == Vector3i(x, y, board2.z_dimension):
+			# Same as coords1!
+			continue
+		elif board2.is_empty_at_cell(Vector2i(x, y)):
+			coords2 = Vector3i(x, y, board2.z_dimension)
 		else:
 			attempts_left -= 1
-			if not attempts_left: return # Board was too full. Fail.
+			if attempts_left < 8: 
+				# Board was too full. Try to force a portal
+				if board2.can_force_clear(Vector2i(x, y)):
+					coords2 = Vector3i(x, y, board2.z_dimension)
+					force2 = true
+				elif not attempts_left:
+					return # Couldn't force a portal either. Give up.
+	
+	# Force clear cells if necessary
+	if force1: board1.force_clear_cell(Vector2i(coords1.x, coords1.y))
+	if force2: board2.force_clear_cell(Vector2i(coords2.x, coords2.y))
 	
 	# Create portal!
 	var portal1: Portal = Board.boards[coords1.z].create_portal(coords1.x, coords1.y)
