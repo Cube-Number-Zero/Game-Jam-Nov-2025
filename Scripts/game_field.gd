@@ -3,7 +3,7 @@ class_name GameField extends Control
 
 const PACKED_BOARD: PackedScene = preload("res://Scenes/board.tscn")
 
-static var meta_grid_dimensions: Vector2i = Vector2i(2, 2) ## How many boards are in the game?
+static var meta_grid_dimensions := Vector2i(2, 2) ## How many boards are in the game?
 
 # i changed this one - i hope it dont fuck up
 static var disconnected_regions: Dictionary[Flower.FlowerType, int] = {
@@ -59,6 +59,7 @@ func create_random_flower() -> void:
 	var used_board: Board = possible_boards.pick_random()
 	
 	used_board.create_flower_at_random_location(type)
+	check_disconnected_regions(type)
 	
 
 func create_random_portals() -> void:
@@ -100,6 +101,7 @@ func create_random_portals() -> void:
 	var portal2: Portal = Board.boards[coords2.z].create_portal(coords2.x, coords2.y)
 	Portal.link_portals(portal1, portal2)
 	Portal.update_colors()
+	check_all_disconnected_regions()
 
 ## Resizes the game world to fit the screen.
 func calculate_scale() -> void:
