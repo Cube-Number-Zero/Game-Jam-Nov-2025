@@ -621,7 +621,7 @@ func draw_cell(cell1: Vector2i, cell2: Vector2i, direction: Vector2i) -> void:
 			var atlasindex2_add = VECTOR_TO_ATLAS_INDEX[-direction]
 			var atlascoords2_add: Vector2i = ATLAS_INDEX_TO_ATLAS_COORDS[atlasindex2_add]
 			layer.set_cell(cell2, 0, atlascoords2_add + ATLAS_OFFSETS[drawing_type])
-		elif atlascoords2 == FLOWER_ATLAS_COORDS:
+		elif atlascoords2 == ATLAS_OFFSETS[drawing_type]:
 			is_drawing = false
 			should_recheck_connected_flowers = true
 		elif atlascoords2 == PORTAL_ATLAS_COORDS:

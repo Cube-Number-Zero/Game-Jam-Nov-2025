@@ -131,17 +131,42 @@ func check_disconnected_regions(type: Flower.FlowerType) -> void:
 	if len(flower_lists[type]) == 0:
 		return
 	var reached_flowers: Array[Flower] = []
+	var regions: Array[Array] = []
 	var unreached_flowers: Array = flower_lists[type].duplicate()
 	
 	while len(unreached_flowers):
+		var current_region: Array[Flower] = []
 		disconnected_regions[type] += 1
 		var connected: Array[Flower] = Board.get_flowers_connected_to_cell(
-			Vector3i(unreached_flowers[0].cell.x, unreached_flowers[0].cell.y, unreached_flowers[0].get_node(^"../..").z_dimension),
-			type)
+			Vector3i(	unreached_flowers[0].cell.x,
+						unreached_flowers[0].cell.y,
+						unreached_flowers[0].get_node(^"../..").z_dimension), type)
 		for connected_flower: Flower in connected:
-			if not connected_flower in reached_flowers:
+			if not connected_flower in current_region:
 				reached_flowers.append(connected_flower)
+				current_region.append(connected_flower)
 			unreached_flowers.erase(connected_flower)
+		regions.append(current_region)
+	
+	# Check to see which flowers are disconnected
+	if len(regions) == 0:
+		return
+
+	var largest_region_size: int
+	var largest_region_index: int
+	
+	for region_index: int in range(len(regions)):
+		if len(regions[region_index]) > largest_region_size:
+			largest_region_index = region_index
+			largest_region_size = len(regions[region_index])
+	
+	# Display alerts above flowers
+	
+	for flower: Flower in reached_flowers:
+		if flower in regions[largest_region_index] and largest_region_size > 1:
+			flower.set_alert_visibility(false)
+		else:
+			flower.set_alert_visibility(true)
 
 func check_all_disconnected_regions() -> void:
 	check_disconnected_regions(Flower.FlowerType.FLOWER_COLOR_1)

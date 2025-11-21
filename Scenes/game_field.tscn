@@ -26,7 +26,6 @@ size_flags_vertical = 3
 mouse_filter = 2
 
 [node name="CheckIslandsTimer" type="Timer" parent="."]
-autostart = true
 
 [node name="PortalSpawnTimer" type="Timer" parent="."]
 wait_time = 15.0

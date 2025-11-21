@@ -19,6 +19,10 @@ const FLOWER_REMOVAL_CHANCE: float = 0.1 ## The odds this flower will be removed
 func start_particles() -> void:
 	$CPUParticles2D.texture = PARTICLE_TEXTURES[type]
 	$CPUParticles2D.call_deferred(&"restart")
+	
+	# Move AlertLabel if at the top of the board
+	if cell.y == 0:
+		$AlertLabel.position.y = 12.5
 
 func check_for_flower_decay() -> void:
 	var connections: int = $"../..".count_flower_connections(cell)
@@ -36,3 +40,7 @@ func _on_flower_removal_timer_timeout() -> void:
 
 func _on_cpu_particles_2d_finished() -> void:
 	$CPUParticles2D.queue_free()
+
+func set_alert_visibility(alert: bool) -> void:
+	$AlertLabel.visible = alert
+	
