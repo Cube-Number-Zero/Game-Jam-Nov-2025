@@ -54,17 +54,24 @@ color_ramp = SubResource("Gradient_hbmji")
 stream = ExtResource("2_4r3j5")
 autoplay = true
 
-[node name="AlertLabel" type="Label" parent="."]
+[node name="AlertLabel" type="RichTextLabel" parent="."]
 custom_minimum_size = Vector2(25, 16)
 offset_left = -12.5
 offset_top = -28.5
 offset_right = 12.5
 offset_bottom = -12.5
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_hbmji")
-text = "!"
+theme_override_fonts/normal_font = ExtResource("3_hbmji")
+bbcode_enabled = true
+text = "[wave freq=2.5][pulse freq=0.75 color=#ffffff7f]!"
+fit_content = true
+scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="AlertColorTimer" type="Timer" parent="."]
+autostart = true
+
 [connection signal="timeout" from="FlowerRemovalTimer" to="." method="_on_flower_removal_timer_timeout"]
 [connection signal="finished" from="CPUParticles2D" to="." method="_on_cpu_particles_2d_finished"]
+[connection signal="timeout" from="AlertColorTimer" to="." method="_on_alert_color_timer_timeout"]

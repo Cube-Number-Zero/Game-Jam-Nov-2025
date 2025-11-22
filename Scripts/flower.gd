@@ -20,6 +20,7 @@ func start_particles() -> void:
 	$CPUParticles2D.texture = PARTICLE_TEXTURES[type]
 	$CPUParticles2D.call_deferred(&"restart")
 	
+	recolor_alert()
 	# Move AlertLabel if at the top of the board
 	if cell.y == 0:
 		$AlertLabel.position.y = 12.5
@@ -37,10 +38,21 @@ func _on_flower_removal_timer_timeout() -> void:
 		if len($"../../../..".flower_lists[type]) > 3: # Don't erase flowers when there are fewer than three of thi type
 			check_for_flower_decay()
 
+func recolor_alert() -> void:
+	if $AlertLabel.visible:
+		var fill: float = $"../../../../../HBoxContainer/GameplayMenu/background_base/time_left_progress_bar".value / 100.0
+		$AlertLabel.self_modulate = Color(1.0, fill, fill)
 
 func _on_cpu_particles_2d_finished() -> void:
 	$CPUParticles2D.queue_free()
 
 func set_alert_visibility(alert: bool) -> void:
 	$AlertLabel.visible = alert
-	
+	if alert:
+		recolor_alert()
+		$AlertColorTimer.start()
+	else:
+		$AlertColorTimer.stop()
+
+func _on_alert_color_timer_timeout() -> void:
+	recolor_alert()

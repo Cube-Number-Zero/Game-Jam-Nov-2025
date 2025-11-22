@@ -10,7 +10,10 @@ const PORTAL_REMOVAL_CHANCE: float = 0.75 ## The odds this portal will be remove
 func _ready() -> void:
 	all_portal_list.append(self)
 
-
+func _physics_process(_delta: float) -> void:
+	assert($"../../TileMapLayer1".get_cell_atlas_coords(cell) == Board.PORTAL_ATLAS_COORDS)
+	assert($"../../TileMapLayer2".get_cell_atlas_coords(cell) == Board.PORTAL_ATLAS_COORDS)
+	assert($"../../TileMapLayer3".get_cell_atlas_coords(cell) == Board.PORTAL_ATLAS_COORDS)
 
 
 static func link_portals(portal1: Portal, portal2: Portal) -> void:

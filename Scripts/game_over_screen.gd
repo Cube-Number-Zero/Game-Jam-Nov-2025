@@ -38,9 +38,9 @@ func game_done(score: int) -> void:
 	music_player.stop()
 	music_player.set_stream(gameover_theme_intro)
 	music_player.play()
-	if score <= 150:
+	if score <= 200:
 		image.set_texture(bad_image)
-	elif score <= 300:
+	elif score <= 500:
 		image.set_texture(mid_image)
 	else:
 		image.set_texture(good_image)

@@ -210,12 +210,11 @@ func delete_obstacle(cell: Vector2i) -> void:
 
 ## Return the type of a flower located at cell
 func determine_flower_type(cell: Vector2i) -> Flower.FlowerType:
-	var type: Flower.FlowerType
-	for test_type: Flower.FlowerType in Flower.FLOWER_TYPES:
-		if LAYER_FROM_TYPE[test_type].get_cell_atlas_coords(cell) == ATLAS_OFFSETS[test_type]:
-			type = test_type
-			break
-	return type
+	for type: Flower.FlowerType in Flower.FLOWER_TYPES:
+		if LAYER_FROM_TYPE[type].get_cell_atlas_coords(cell) == ATLAS_OFFSETS[type]:
+			return type
+	push_error("Determined flower type on a cell that didn't have a flower on it!")
+	return Flower.FlowerType
 
 ## Count in how many directions is a flower connected
 func count_flower_connections(cell: Vector2i) -> int:
@@ -228,6 +227,9 @@ func count_flower_connections(cell: Vector2i) -> int:
 			count += 1
 	
 	return count
+
+func is_in_bounds(cell: Vector2i) -> bool:
+	return (cell.x >= 0) and (cell.y >= 0) and (cell.x < board_dimensions_cells) and (cell.y < board_dimensions_cells)
 
 #region dark magic
 
@@ -243,6 +245,7 @@ func can_force_clear(cell) -> bool:
 func force_clear_cell(cell: Vector2i, keep_vine_attachments: bool = false, keep_vine_type: Flower.FlowerType = Flower.FlowerType.FLOWER_COLOR_1) -> void:
 	for type: Flower.FlowerType in Flower.FLOWER_TYPES:
 		var atlascoords: Vector2i = LAYER_FROM_TYPE[type].get_cell_atlas_coords(cell)
+		assert(atlascoords != PORTAL_ATLAS_COORDS)
 		if atlascoords.y >= 4: atlascoords -= ATLAS_OFFSETS[type]
 		if atlascoords == EMPTY_ATLAS_COORDS: continue # Don't need to erase
 		elif ATLAS_COORDS_TO_ATLAS_INDEX.has(atlascoords):
@@ -278,7 +281,7 @@ func is_portal_connected(cell: Vector2i) -> bool:
 	assert($TileMapLayer1.get_cell_atlas_coords(cell) == PORTAL_ATLAS_COORDS)
 	var portal1: Portal = get_portal_at_cell(cell)
 	for type: Flower.FlowerType in Flower.FLOWER_TYPES:
-		for direction: Vector2i in [Vector2i( 0,-1), Vector2i( 1, 0), Vector2i( 0, 1), Vector2i(-1, 0)]:
+		for direction: Vector2i in VECTOR_TO_ATLAS_INDEX.keys():
 			if self == portal1.linked_portal.get_node(^"../.."):
 				# Linked portal is on the same board.
 				if portal1.linked_portal.cell == cell + direction:
@@ -327,7 +330,7 @@ func erase() -> void:
 				var atlascoords: Vector2i = layer.get_cell_atlas_coords(cell)
 				if atlascoords == EMPTY_ATLAS_COORDS: continue # Empty square!
 				if atlascoords == OBSTACLE_ATLAS_COORDS: continue # Obstacle
-				atlascoords -= ATLAS_OFFSETS[type]
+				if atlascoords.y >= 4: atlascoords -= ATLAS_OFFSETS[type]
 				
 				for direction: Vector2i in VECTOR_TO_ATLAS_INDEX.keys():
 					try_to_erase_path(cell, direction, type)
@@ -335,8 +338,7 @@ func erase() -> void:
 				if not atlascoords in [FLOWER_ATLAS_COORDS, PORTAL_ATLAS_COORDS]:
 					layer.erase_cell(cell)
 				
-				if not atlascoords in DEAD_ENDS:
-					$"../..".check_disconnected_regions(drawing_type)
+				$"../..".check_disconnected_regions(drawing_type)
 	else:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			var cell: Vector2i = $TileMapLayer1.local_to_map(get_local_mouse_position() / $TileMapLayer1.scale)
@@ -353,8 +355,8 @@ func try_to_erase_path(cell: Vector2i, offset: Vector2i, type: Flower.FlowerType
 	var layer: TileMapLayer = LAYER_FROM_TYPE[type]
 	var atlascoords = layer.get_cell_atlas_coords(cell + offset)
 	if atlascoords == EMPTY_ATLAS_COORDS: return
-	if atlascoords == OBSTACLE_ATLAS_COORDS: return
-	if atlascoords == PORTAL_ATLAS_COORDS:
+	elif atlascoords == OBSTACLE_ATLAS_COORDS: return
+	elif atlascoords == PORTAL_ATLAS_COORDS:
 		var portal1: Portal = get_portal_at_cell(cell + offset)
 		var portal2: Portal = portal1.linked_portal
 		var board2: Board = portal2.get_node(^"../..")
@@ -503,9 +505,6 @@ func draw() -> void:
 				drawing_type = Flower.FlowerType.FLOWER_COLOR_3
 				drawing_cell = cell
 
-func is_in_bounds(cell: Vector2i) -> bool:
-	return (cell.x >= 0) and (cell.y >= 0) and (cell.x < board_dimensions_cells) and (cell.y < board_dimensions_cells)
-
 func can_draw_at(cell: Vector2i) -> bool:
 	if not is_in_bounds(cell): return false # out of bounds
 	
@@ -615,9 +614,13 @@ func can_draw_through_portal(cell: Vector2i, direction: Vector2i) -> bool:
 	var cell2: Vector2i = portal2.cell + direction;
 	var other_board: Board = portal2.get_node(^"../..")
 	if not other_board.can_draw_at(cell2): return false
-	var atlascoords: Vector2i = LAYER_FROM_TYPE[drawing_type].get_cell_atlas_coords(cell2)
+	var atlascoords: Vector2i = other_board.LAYER_FROM_TYPE[drawing_type].get_cell_atlas_coords(cell2)
 	if atlascoords == PORTAL_ATLAS_COORDS:
 		return other_board.can_draw_through_portal(cell2, direction)
+	
+	for layer: TileMapLayer in other_board.LAYER_FROM_TYPE.values():
+		if layer.get_cell_atlas_coords(cell2) in STRAIGHT_ATLAS_CELLS:
+			return other_board.can_make_overpass(cell2, direction)
 	return true
 
 func can_make_overpass(cell: Vector2i, direction: Vector2i) -> bool:
@@ -665,7 +668,7 @@ func draw_cell(cell1: Vector2i, cell2: Vector2i, direction: Vector2i) -> void:
 			var atlasindex2_add = VECTOR_TO_ATLAS_INDEX[-direction]
 			var atlascoords2_add: Vector2i = ATLAS_INDEX_TO_ATLAS_COORDS[atlasindex2_add]
 			layer.set_cell(cell2, 0, atlascoords2_add + ATLAS_OFFSETS[drawing_type])
-		elif atlascoords2 == ATLAS_OFFSETS[drawing_type]:
+		elif atlascoords2 == ATLAS_OFFSETS[drawing_type]: # Flower
 			is_drawing = false
 			should_recheck_connected_flowers = true
 		elif atlascoords2 == PORTAL_ATLAS_COORDS:
@@ -674,6 +677,7 @@ func draw_cell(cell1: Vector2i, cell2: Vector2i, direction: Vector2i) -> void:
 				var other_board: Board = portal.get_node(^"../..")
 				other_board.draw_cell(Vector2i(-1, -1), portal.cell + direction, direction)
 				is_drawing = false
+				should_recheck_connected_flowers = true # Shouldn't need this, but we do, and it shouldn't cost much performance
 			else:
 				is_drawing = false
 				return
